@@ -1,0 +1,24 @@
+.my-nav-bg {
+  background-color: #171b18;
+}
+
+.my-nav-color {
+  color: aqua;
+}
+
+.my-nav-color:hover {
+  color: cyan;
+}
+
+nav .active {
+  color: #7cfc00;
+}
+
+.my-margin {
+  margin-right: 20px;
+  text-decoration: none;
+}
+
+.custom-text {
+  text-decoration: none;
+}

@@ -1,0 +1,8 @@
+.my-bg1 {
+  background-color: yellowgreen;
+  color: red;
+}
+
+.my-bg1 :hover {
+  color: whitesmoke;
+}
