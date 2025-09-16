@@ -13,9 +13,9 @@ const Home = () => {
         <Carousel.Item>
           <img src={img1} className="d-block w-100" alt="Slider Picture" />
           <Carousel.Caption>
-            <h1 className="text-info">
+            <h5 className="text-info">
               لآ اِلَهَ اِلّا اللّهُ مُحَمَّدٌ رَسُوُل اللّهِ
-            </h1>
+            </h5>
             <p>
               এই পার্থিব জীবণ খেল-তামাশা ব্যতীত কিছুই নয় ! সুরা-আনকাবুত (৬৪)
             </p>
@@ -24,7 +24,7 @@ const Home = () => {
         <Carousel.Item>
           <img src={img2} className="d-block w-100" alt="Slider Picture" />
           <Carousel.Caption>
-            <h3>পার্থিব জীবণ ধোকার উপকরণ ব্যতীত কিছুই নয় !</h3>
+            <h5>পার্থিব জীবণ ধোকার উপকরণ ব্যতীত কিছুই নয় !</h5>
             <p className="text-light">
               জাহান্নামকে প্রবৃত্তি এবং জান্নাত কস্ট দ্বারা পরিবেস্টন করা হয়েছে
               ! (বুখারী-মুসলিম (২৮২২))
@@ -34,7 +34,7 @@ const Home = () => {
         <Carousel.Item>
           <img src={img3} className="d-block w-100" alt="Slider Picture" />
           <Carousel.Caption>
-            <h3>পরকালের সুখ হচ্ছে প্রকৃত সুখ !</h3>
+            <h5>পরকালের সুখ হচ্ছে প্রকৃত সুখ !</h5>
             <p>
               .দুনিয়াতে এমন ভাবে জীবণ-যাপন করো যেন তুমি একজন অপরিচিত মুসাফির
               অথবা পথোচারী আর সর্বদা নিজেকে কবরবাসী মনে করো !!! মিশকাত-(৫২৭৪)
@@ -46,10 +46,10 @@ const Home = () => {
         <div>
           <div className=" bg-dark text-light text-center  p-1">
             <p>Starting Date:</p>
-            <p>15/09/2025 English</p>
-            <p>31/05/1432 Bangla</p>
-            <p>21/03/1447 Arabic</p>
-            <p>Monday</p>
+            <p>17/09/2025 English</p>
+            <p>02/06/1432 Bangla</p>
+            <p>23/03/1447 Arabic</p>
+            <p>Wednesday</p>
           </div>
         </div>
       </div>
