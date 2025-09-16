@@ -16,7 +16,7 @@ const generalRules = [
   },
   {
     id: 4,
-    rule: 'বিপদে সুন্দন ধর্য ধারণ করো !',
+    rule: 'বিপদে সুন্দর ধর্য ধারণ করো !',
   },
   {
     id: 5,
@@ -84,7 +84,11 @@ const generalRules = [
   },
   {
     id: 21,
-    rule: ' কারো ক্ষরি করো না !',
+    rule: ' কারো ক্ষতি করো না !',
+  },
+  {
+    id: 22,
+    rule: ' পর নিন্দা করো না !',
   },
 ];
 
@@ -105,7 +109,7 @@ const GeneralRules = () => {
         return (
           <div
             key={rule.id}
-            className="bg-secondary text-light m-2 mt-0 p-2 border border-danger border-2"
+            className="bg-secondary text-light m-2 mt-0 p-2 border border-danger border-2 "
           >
             <h3 className="bg-dark d-inline-block p-1">RuleNo : {rule.id}</h3>
             <h3>{rule.rule}</h3>

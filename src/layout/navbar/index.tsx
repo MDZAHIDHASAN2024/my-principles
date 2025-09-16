@@ -5,9 +5,9 @@ import './index.css';
 const Index = () => {
   return (
     <Navbar sticky="top" expand="lg" className="my-nav-bg">
-      <Container fluid>
+      <Container>
         <Navbar.Brand className="text-light " as={Link} to={'/'}>
-          My Life Principle's
+          My Principle's
         </Navbar.Brand>
         <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
