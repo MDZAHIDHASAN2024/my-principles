@@ -93,7 +93,7 @@ const generalRules = [
 ];
 
 const GeneralRules = () => {
-  const [searchRule, setSearchRule] = useState('');
+  const [searchRule, setSearchRule] = useState<number | string>('');
   return (
     <div className="container bg-dark">
       <PageTitle title="General-Rule Page" />
@@ -105,17 +105,24 @@ const GeneralRules = () => {
           placeholder="Search Rule"
         />
       </div>
-      {generalRules.map((rule) => {
-        return (
-          <div
-            key={rule.id}
-            className="bg-secondary text-light m-2 mt-0 p-2 border border-danger border-2 "
-          >
-            <h3 className="bg-dark d-inline-block p-1">RuleNo : {rule.id}</h3>
-            <h3>{rule.rule}</h3>
-          </div>
-        );
-      })}
+
+      {generalRules
+        .filter((rule) => {
+          return searchRule === ''
+            ? rule
+            : rule.id.toString().includes(searchRule.toString());
+        })
+        .map((rule) => {
+          return (
+            <div
+              key={rule.id}
+              className="bg-secondary text-light m-2 mt-0 p-2 border border-danger border-2 "
+            >
+              <h3 className="bg-dark d-inline-block p-1">RuleNo : {rule.id}</h3>
+              <h3>{rule.rule}</h3>
+            </div>
+          );
+        })}
     </div>
   );
 };
