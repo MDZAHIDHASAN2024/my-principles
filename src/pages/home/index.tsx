@@ -44,12 +44,12 @@ const Home = () => {
       </Carousel>
       <div className="">
         <div>
-          <div className=" bg-dark text-light text-center  p-1">
+          <div className=" bg-dark text-light text-center border  p-1">
             <p>Starting Date:</p>
-            <p>17/09/2025 English</p>
-            <p>02/06/1432 Bangla</p>
-            <p>23/03/1447 Arabic</p>
-            <p>Wednesday</p>
+            <p>19/09/2025 English</p>
+            <p>04/06/1432 Bangla</p>
+            <p>25/03/1447 Arabic</p>
+            <p>Friday</p>
           </div>
         </div>
       </div>

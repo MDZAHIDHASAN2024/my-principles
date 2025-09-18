@@ -9,7 +9,7 @@ const Index = () => {
         <Navbar.Brand className="text-light " as={Link} to={'/'}>
           My Principle's
         </Navbar.Brand>
-        <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
+        <Navbar.Toggle className="bg-light " aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav>
             <NavLink
