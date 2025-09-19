@@ -14,10 +14,6 @@ const principles = [
     rule: 'রামাজান মাসে ছিয়াম পালন করো !',
   },
   {
-    id: 4,
-    rule: 'দৈনিক কোরআন তিলাওয়াত করো !',
-  },
-  {
     id: 5,
     rule: 'মাসিক বেতন এর ২.৫% দান করো !',
   },
@@ -27,7 +23,7 @@ const Principles = () => {
     <div className="container bg-secondary my-rule p-2 ">
       <PageTitle title="Main Principle Page" />
       <div className="bg-warning p-2 text-light d-block text-center ">
-        <h2 className="fw-bold">Principle of 5</h2>
+        <h2 className="fw-bold">Principle of 4</h2>
       </div>
       {principles.map((principle) => {
         return (
