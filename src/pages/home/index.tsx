@@ -2,6 +2,7 @@
 import img1 from '../../assets/images/slider01.jpg';
 import img2 from '../../assets/images/slider02.jpg';
 import img3 from '../../assets/images/slider03.jpg';
+import myAudio from '../../assets/audio/my-heart.mp3';
 import './index.css';
 import PageTitle from '../pageTitle/pageTitle';
 import { Carousel } from 'react-bootstrap';
@@ -189,7 +190,8 @@ const Home = () => {
         </Carousel.Item>
       </Carousel>
       <div className="bg-secondary text-center p-1 border text-info fw-bolder">
-        <h2>Sura Ad-Dukhan 38-57</h2>
+        <h2>Sura Ad-Dukhan 44: 38-57</h2>
+        <audio src={myAudio} controls /> <br />
         <input
           type="text"
           value={search}
@@ -215,10 +217,10 @@ const Home = () => {
         <div>
           <div className=" bg-dark text-light text-center border  p-1">
             <p>Starting Date:</p>
-            <p>20/09/2025 English</p>
-            <p>05/06/1432 Bangla</p>
-            <p>26/03/1447 Arabic</p>
-            <p>Saturday</p>
+            <p>21/09/2025 English</p>
+            <p>06/06/1432 Bangla</p>
+            <p>27/03/1447 Arabic</p>
+            <p>Sunday</p>
           </div>
         </div>
       </div>
