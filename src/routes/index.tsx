@@ -11,6 +11,7 @@ import MoneySavingFormula from '../pages/moneySavingFormula/moneySavingFormula';
 import ReduceSpeakingFormula from '../pages/reduceSpeakingFormula/reduceSpeakingFormula';
 import TimeSavingFormula from '../pages/timeSavingFormula/timeSavingFormula';
 import TourPlanFormula from '../pages/tourPlanFormula/tourPlanFormula';
+import Works from '../pages/works/works';
 
 const Index = () => {
   return (
@@ -28,6 +29,7 @@ const Index = () => {
         />
         <Route path="/timeSavingFormula" element={<TimeSavingFormula />} />
         <Route path="/tourPlanFormula" element={<TourPlanFormula />} />
+        <Route path="/works" element={<Works />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />
