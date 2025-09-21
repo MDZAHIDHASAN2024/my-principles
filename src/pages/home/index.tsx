@@ -177,10 +177,10 @@ const Home = () => {
         <div>
           <div className=" bg-dark text-light text-center border  p-1">
             <p>Starting Date:</p>
-            <p>21/09/2025 English</p>
-            <p>06/06/1432 Bangla</p>
-            <p>27/03/1447 Arabic</p>
-            <p>Sunday</p>
+            <p>22/09/2025 English</p>
+            <p>07/06/1432 Bangla</p>
+            <p>28/03/1447 Arabic</p>
+            <p>Monday</p>
           </div>
         </div>
       </div>
