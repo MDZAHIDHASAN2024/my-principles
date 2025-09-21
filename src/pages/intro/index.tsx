@@ -2,7 +2,7 @@ import profile from '../../assets/images/jahid.jpg';
 import PageTitle from '../pageTitle/pageTitle';
 const Intro = () => {
   return (
-    <div style={{ height: '950px' }} className="container bg-secondary ">
+    <div className="container bg-secondary ">
       <PageTitle title="Intro Page" />
       <div className="bg-secondary ">
         <img
