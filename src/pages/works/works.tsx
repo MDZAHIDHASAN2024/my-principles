@@ -9,7 +9,7 @@ const Works = () => {
       <div className="bg-dark text-light text-center  p-1">
         <h3 className="fw-bolder">Daily Home Working List</h3>
       </div>
-      <Table striped bordered hover variant="dark">
+      <Table responsive striped bordered hover variant="dark">
         <thead>
           <tr>
             <th>Form Time</th>
