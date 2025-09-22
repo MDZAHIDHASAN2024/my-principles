@@ -12,8 +12,8 @@ const Works = () => {
       <Table responsive striped bordered hover variant="dark">
         <thead>
           <tr>
-            <th>Form Time</th>
-            <th>To Time</th>
+            <th>Start Time</th>
+            <th>End Time</th>
             <th>Work Name</th>
             <th>Remarks</th>
           </tr>
