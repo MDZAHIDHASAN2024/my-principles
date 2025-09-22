@@ -1,4 +1,5 @@
 import { Table } from 'react-bootstrap';
+import PageTitle from '../pageTitle/pageTitle';
 
 const Works = () => {
   return (
@@ -6,6 +7,7 @@ const Works = () => {
       style={{ height: '1000px' }}
       className="container bg-secondary text-center fw-bold p-2"
     >
+      <PageTitle title="Work Page" />
       <div className="bg-dark text-light text-center  p-1">
         <h3 className="fw-bolder">Daily Home Working List</h3>
       </div>
@@ -23,43 +25,43 @@ const Works = () => {
             <td>4:00AM</td>
             <td>5:00AM</td>
             <td>Salat, Quran, Islamic Book Read</td>
-            <td></td>
+            <td>1</td>
           </tr>
           <tr>
             <td>5:00AM</td>
             <td>6:00AM</td>
             <td>Excercise, English Speaking Practice</td>
-            <td></td>
+            <td>1</td>
           </tr>
           <tr>
             <td>6:00AM</td>
             <td>7:00AM</td>
             <td>WebDevelopment Practice</td>
-            <td></td>
+            <td>1</td>
           </tr>
           <tr>
             <td>7:00AM</td>
             <td>8:00AM</td>
             <td>Breakfast, Ready for Office & Go</td>
-            <td></td>
+            <td>1</td>
           </tr>
           <tr>
             <td>8:00AM</td>
             <td>8:00PM</td>
             <td>Office Works, Salat</td>
-            <td></td>
+            <td>12</td>
           </tr>
           <tr>
             <td>8:00PM</td>
             <td>9:00PM</td>
             <td>Salat, Dinner</td>
-            <td></td>
+            <td>1</td>
           </tr>
           <tr>
             <td>9:00PM</td>
             <td>10:00PM</td>
             <td>Family Time, All Work Review</td>
-            <td></td>
+            <td>1</td>
           </tr>
         </tbody>
       </Table>
