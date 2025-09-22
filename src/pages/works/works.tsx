@@ -63,6 +63,12 @@ const Works = () => {
             <td>Family Time, All Work Review</td>
             <td>1</td>
           </tr>
+          <tr>
+            <td>10:00PM</td>
+            <td>4:00AM</td>
+            <td>Sleep</td>
+            <td>6</td>
+          </tr>
         </tbody>
       </Table>
     </div>
