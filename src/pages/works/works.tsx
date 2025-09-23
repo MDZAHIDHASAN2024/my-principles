@@ -7,7 +7,7 @@ const Works = () => {
       style={{ height: '1000px' }}
       className="container bg-secondary text-center fw-bold p-2"
     >
-      <PageTitle title="Work Page" />
+      <PageTitle title="Work" />
       <div className="bg-dark text-light text-center  p-1">
         <h3 className="fw-bolder">Daily Home Working List</h3>
       </div>
@@ -24,7 +24,7 @@ const Works = () => {
           <tr>
             <td>4:00AM</td>
             <td>5:00AM</td>
-            <td>Salat, Quran, Islamic Book Read</td>
+            <td>Salat, Quran, Drink A Glass of Water, Islamic Book Read</td>
             <td>1</td>
           </tr>
           <tr>

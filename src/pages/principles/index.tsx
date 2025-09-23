@@ -21,7 +21,7 @@ const principles = [
 const Principles = () => {
   return (
     <div className="container bg-secondary my-rule p-2 ">
-      <PageTitle title="Main Principle Page" />
+      <PageTitle title="Main Principle" />
       <div className="bg-warning p-2 text-light d-block text-center ">
         <h2 className="fw-bold">Principle of 4</h2>
       </div>

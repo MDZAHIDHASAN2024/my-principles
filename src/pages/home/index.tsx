@@ -115,7 +115,7 @@ const Home = () => {
   const [search, setSearch] = useState('');
   return (
     <div className="container bg-dark ">
-      <PageTitle title="Home Page" />
+      <PageTitle title="Home" />
       <Carousel>
         <Carousel.Item>
           <img src={img1} className="d-block w-100" alt="Slider Picture" />
@@ -177,10 +177,10 @@ const Home = () => {
         <div>
           <div className=" bg-dark text-light text-center border  p-1">
             <p>Starting Date:</p>
-            <p>22/09/2025 English</p>
-            <p>07/06/1432 Bangla</p>
-            <p>28/03/1447 Arabic</p>
-            <p>Monday</p>
+            <p>24/09/2025 English</p>
+            <p>09/06/1432 Bangla</p>
+            <p>01/04/1447 Arabic</p>
+            <p>Wednesday</p>
           </div>
         </div>
       </div>

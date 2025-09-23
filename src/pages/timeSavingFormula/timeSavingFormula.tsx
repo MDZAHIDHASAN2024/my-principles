@@ -37,7 +37,7 @@ const tipsData = [
 const TimeSavingFormula = () => {
   return (
     <div className="container bg-dark">
-      <PageTitle title="Time Saving Formula Page" />
+      <PageTitle title="Time Saving Formula " />
       <h2 className="text-light">Time Reducing Formula: 2Q</h2>
       <div className="bg-secondary  p-3 text-info">
         {timeData.map((rule) => {

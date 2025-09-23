@@ -45,7 +45,7 @@ const tipsData = [
 const TourPlanFormula = () => {
   return (
     <div className="container bg-dark">
-      <PageTitle title="Tour Plan Formula Page" />
+      <PageTitle title="Tour Plan Formula" />
       <h2 className="text-light">Tour Plan Formula: 4Q</h2>
       <div className="bg-secondary  p-3 text-info">
         {tourData.map((rule) => {

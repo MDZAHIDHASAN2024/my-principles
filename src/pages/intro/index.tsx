@@ -3,7 +3,7 @@ import PageTitle from '../pageTitle/pageTitle';
 const Intro = () => {
   return (
     <div className="container bg-secondary ">
-      <PageTitle title="Intro Page" />
+      <PageTitle title="Intro" />
       <div className="bg-secondary ">
         <img
           style={{ width: '100px', display: 'block', margin: 'auto' }}

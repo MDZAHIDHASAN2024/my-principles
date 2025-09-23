@@ -45,7 +45,7 @@ const tipsData = [
 const ReduceSpeakingFormula = () => {
   return (
     <div className="container bg-dark">
-      <PageTitle title="Reduce Spaking Formula Page" />
+      <PageTitle title="Reduce Spaking Formula" />
       <h2 className="text-light">Reduce Speaking Formula: 3Q</h2>
       <div className="bg-secondary  p-3 text-info">
         {speakData.map((rule) => {

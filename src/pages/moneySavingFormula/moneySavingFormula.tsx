@@ -49,7 +49,7 @@ const tipsData = [
 const MoneySavingFormula = () => {
   return (
     <div className="container bg-dark">
-      <PageTitle title="Money Saving Formula Page" />
+      <PageTitle title="Money Saving Formula " />
       <h2 className="text-light">Money Saving Formula: 4Q</h2>
       <div className="bg-secondary  p-3 text-info">
         {moneyData.map((rule) => {
