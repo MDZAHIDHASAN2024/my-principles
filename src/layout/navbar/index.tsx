@@ -2,17 +2,18 @@ import { Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router';
 
 // react icon
-import { FaBook } from 'react-icons/fa6';
+
 //my css
 import './index.css';
+import Button from '../../components/button/button';
+
 const Index = () => {
   return (
     <Navbar sticky="top" expand="lg" className="my-nav-bg">
       <Container>
         <Navbar.Brand className="text-light " as={Link} to={'/'}>
-          <div className="text-primary p-1">
-            My Principle's
-            <FaBook />
+          <div className="text-primary ">
+            <Button />
           </div>
         </Navbar.Brand>
         <Navbar.Toggle className="bg-light " aria-controls="basic-navbar-nav" />
@@ -32,9 +33,15 @@ const Index = () => {
             </NavLink>
             <NavLink
               className="m-auto pe-4 text-decoration-none fw-bold"
+              to={'/FoodControl'}
+            >
+              Food Controls
+            </NavLink>
+            <NavLink
+              className="m-auto pe-4 text-decoration-none fw-bold"
               to={'/Works'}
             >
-              Work
+              Work Plans
             </NavLink>
             <NavLink
               className="m-auto pe-4 text-decoration-none fw-bold"

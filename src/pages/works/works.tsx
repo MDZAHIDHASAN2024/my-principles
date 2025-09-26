@@ -24,7 +24,7 @@ const Works = () => {
           <tr>
             <td>4:00AM</td>
             <td>5:00AM</td>
-            <td>Salat, Quran, Drink A Glass of Water, Islamic Book Read</td>
+            <td>Salat, Quran, Drink A Glass of Water</td>
             <td>1</td>
           </tr>
           <tr>

@@ -12,6 +12,7 @@ import ReduceSpeakingFormula from '../pages/reduceSpeakingFormula/reduceSpeaking
 import TimeSavingFormula from '../pages/timeSavingFormula/timeSavingFormula';
 import TourPlanFormula from '../pages/tourPlanFormula/tourPlanFormula';
 import Works from '../pages/works/works';
+import FoodControl from '../pages/foodControl/foodControl';
 
 const Index = () => {
   return (
@@ -29,6 +30,7 @@ const Index = () => {
         />
         <Route path="/timeSavingFormula" element={<TimeSavingFormula />} />
         <Route path="/tourPlanFormula" element={<TourPlanFormula />} />
+        <Route path="/foodControl" element={<FoodControl />} />
         <Route path="/works" element={<Works />} />
         <Route path="*" element={<Error />} />
       </Routes>
