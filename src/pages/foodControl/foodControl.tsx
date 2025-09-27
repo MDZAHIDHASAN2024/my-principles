@@ -10,7 +10,7 @@ const foodData = [
     breakfast: '1 Boil Egg + 2 Roti + Vegetables',
     lunch: 'Rice + Fish Curry + Dal + Salad',
     snacks: '3 Date',
-    dinner: '2 Roti + Vegetables + Dal',
+    dinner: '2 Roti + Vegetables ',
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ const foodData = [
     breakfast: '2 Roti + Vegetables',
     lunch: 'Rice + Egg Curry + Salad',
     snacks: '3 Date + 3 Almond',
-    dinner: '2 Roti + Vegetables + Dal',
+    dinner: '2 Roti + Vegetables',
   },
   {
     id: 7,
@@ -58,12 +58,11 @@ const foodData = [
     breakfast: '2 Boil Egg',
     lunch: 'Rice + Chicken/Beef Curry + Salad',
     snacks: '3 Date + 3 Amond + Any Fruits',
-    dinner: '2 Roti + Milk',
+    dinner: '2 Roti + 150ml Milk',
   },
 ];
 
 const FoodControl = () => {
-  <PageTitle title="Food Controls" />;
   const [search, setSearch] = useState('');
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
@@ -71,6 +70,7 @@ const FoodControl = () => {
   };
   return (
     <div style={{ height: '1050px' }} className="container bg-secondary ">
+      <PageTitle title="Food Controls" />
       <div className="bg-dark text-light text-center  p-1">
         <h3 className="fw-bolder pt-4">Daily Food Controls</h3>
       </div>
