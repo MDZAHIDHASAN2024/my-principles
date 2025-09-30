@@ -5,15 +5,32 @@ import { Link, NavLink } from 'react-router';
 
 //my css
 import './index.css';
-import Button from '../../components/button/button';
+import { FaBalanceScale } from 'react-icons/fa';
+import { useState } from 'react';
 
 const Index = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleClick = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
   return (
     <Navbar sticky="top" expand="lg" className="my-nav-bg">
       <Container>
         <Navbar.Brand className="text-light " as={Link} to={'/'}>
           <div className="text-primary ">
-            <Button />
+            <button className="bg-dark rounded-5" onClick={handleClick}>
+              {isLoggedIn ? (
+                <div className="text-info ">
+                  My Principle's
+                  <FaBalanceScale className="ms-1 text-info" />
+                </div>
+              ) : (
+                <div className="text-danger">
+                  My Principle's
+                  <FaBalanceScale className="ms-1 text-danger" />
+                </div>
+              )}
+            </button>
           </div>
         </Navbar.Brand>
         <Navbar.Toggle className="bg-light " aria-controls="basic-navbar-nav" />
@@ -25,24 +42,30 @@ const Index = () => {
             >
               Home
             </NavLink>
-            <NavLink
-              className="m-auto pe-4 text-decoration-none fw-bold"
-              to={'/Intro'}
-            >
-              Intro
-            </NavLink>
-            <NavLink
-              className="m-auto pe-4 text-decoration-none fw-bold"
-              to={'/FoodControl'}
-            >
-              Food Controls
-            </NavLink>
-            <NavLink
-              className="m-auto pe-4 text-decoration-none fw-bold"
-              to={'/Works'}
-            >
-              Work Plans
-            </NavLink>
+            {isLoggedIn && (
+              <NavLink
+                className="m-auto pe-4 text-decoration-none fw-bold"
+                to={'/Intro'}
+              >
+                Intro
+              </NavLink>
+            )}
+            {isLoggedIn && (
+              <NavLink
+                className="m-auto pe-4 text-decoration-none fw-bold"
+                to={'/FoodControl'}
+              >
+                Food Controls
+              </NavLink>
+            )}
+            {isLoggedIn && (
+              <NavLink
+                className="m-auto pe-4 text-decoration-none fw-bold"
+                to={'/Works'}
+              >
+                Work Plans
+              </NavLink>
+            )}
             <NavLink
               className="m-auto pe-4 text-decoration-none fw-bold"
               to={'/Principles'}
