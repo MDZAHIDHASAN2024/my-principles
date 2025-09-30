@@ -128,7 +128,7 @@ const GeneralRules = () => {
   const [searchRule, setSearchRule] = useState<number | string>('');
   return (
     <div className="container bg-dark">
-      <PageTitle title="General-Rule" />
+      <PageTitle title="General-Rules" />
       <div className="container mb-2">
         <input
           type="text"

@@ -1,10 +1,15 @@
-// import { useState } from 'react';
+import { Navigate } from 'react-router';
 
-// import { Navigate, Outlet } from 'react-router';
+type ProtectedRoutesProps = {
+  isLoggedIn: boolean;
+  children: React.ReactNode;
+};
 
-// const ProtectedRoutes = () => {
-//   const [isLoggedIn, setIsLoggedIn] = useState(true);
-//   return isLoggedIn ? <Outlet /> : <Navigate to="/" />;
-// };
+const ProtectedRoutes = ({ isLoggedIn, children }: ProtectedRoutesProps) => {
+  if (!isLoggedIn) {
+    return <Navigate to="*" replace />;
+  }
+  return children;
+};
 
-// export default ProtectedRoutes;
+export default ProtectedRoutes;

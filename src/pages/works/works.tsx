@@ -7,7 +7,7 @@ const Works = () => {
       style={{ height: '1000px' }}
       className="container bg-secondary text-center fw-bold p-2"
     >
-      <PageTitle title="Work" />
+      <PageTitle title="Work Plans" />
       <div className="bg-dark text-light text-center  p-1">
         <h3 className="fw-bolder">Daily Home Working List</h3>
       </div>

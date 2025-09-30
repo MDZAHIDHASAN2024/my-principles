@@ -30,7 +30,7 @@ const Intro = () => {
         </h5>
         <div className="bg-secondary border p-2 mt-5 text-light text-center">
           <h2>Name: MD. ZAHID HASAN</h2>
-          <h2>Father Name: MD. Anwar Hossen</h2>
+          <h2>Father Name: Md. Anwar Hossen</h2>
           <h2>Mother Name: Mst. Jamila Begum</h2>
           <h2>Vill: Beragram</h2>
           <h2>PS: Saghata</h2>
