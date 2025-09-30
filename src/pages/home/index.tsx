@@ -176,11 +176,11 @@ const Home = () => {
       <div className="">
         <div>
           <div className=" bg-dark text-light text-center border  p-1">
-            <p>Starting Date:</p>
-            <p>26/09/2025 English</p>
-            <p>11/06/1432 Bangla</p>
-            <p>3/04/1447 Arabic</p>
-            <p>Friday</p>
+            <p>Effective Date:</p>
+            <p>01/10/2025 English</p>
+            <p>16/06/1432 Bangla</p>
+            <p>8/04/1447 Arabic</p>
+            <p>Wednesday</p>
           </div>
         </div>
       </div>

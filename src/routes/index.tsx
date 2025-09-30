@@ -13,6 +13,7 @@ import TimeSavingFormula from '../pages/timeSavingFormula/timeSavingFormula';
 import TourPlanFormula from '../pages/tourPlanFormula/tourPlanFormula';
 import Works from '../pages/works/works';
 import FoodControl from '../pages/foodControl/foodControl';
+import ProtectedRoutes from './protectedRoutes';
 
 const Index = () => {
   return (
@@ -20,8 +21,10 @@ const Index = () => {
       <Navabar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/intro" element={<Intro />} />
-        <Route path="/principles" element={<Principles />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/intro" element={<Intro />} />
+          <Route path="/principles" element={<Principles />} />
+        </Route>
         <Route path="/generalRules" element={<GeneralRules />} />
         <Route path="/moneySavingFormula" element={<MoneySavingFormula />} />
         <Route
