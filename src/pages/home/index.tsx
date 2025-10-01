@@ -5,8 +5,10 @@ import img3 from '../../assets/images/slider03.jpg';
 import myAudio from '../../assets/audio/my-heart.mp3';
 import './index.css';
 import PageTitle from '../pageTitle/pageTitle';
-import { Carousel } from 'react-bootstrap';
+import { Carousel, ToggleButton } from 'react-bootstrap';
 import { useState } from 'react';
+import { DiVim } from 'react-icons/di';
+import { ImInfo } from 'react-icons/im';
 
 const data = [
   {
@@ -113,6 +115,7 @@ const data = [
 
 const Home = () => {
   const [search, setSearch] = useState('');
+  const [toggle, setToggle] = useState(false);
   return (
     <div className="container bg-dark ">
       <PageTitle title="Home" />
@@ -175,12 +178,21 @@ const Home = () => {
       </div>
       <div className="">
         <div>
-          <div className=" bg-dark text-light text-center border  p-1">
-            <p>Effective Date:</p>
-            <p>01/10/2025 English</p>
-            <p>16/06/1432 Bangla</p>
-            <p>8/04/1447 Arabic</p>
-            <p>Wednesday</p>
+          <div className="bg-dark text-center">
+            <button
+              className="btn btn-primary text-light mt-2"
+              onClick={() => setToggle(!toggle)}
+            >
+              {toggle ? 'Hide' : 'Click to see Effective Date'}
+              {toggle && (
+                <div className=" bg-dark text-light text-center border  p-1">
+                  <p>01/10/2025 English</p>
+                  <p>16/06/1432 Bangla</p>
+                  <p>8/04/1447 Arabic</p>
+                  <p>Wednesday</p>
+                </div>
+              )}
+            </button>
           </div>
         </div>
       </div>

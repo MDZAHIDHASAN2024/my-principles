@@ -15,7 +15,7 @@ const foodData = [
   {
     id: 2,
     time: 'Sunday',
-    breakfast: '2 Roti + Vegetables + Banana',
+    breakfast: 'Rice + Any Vorta Items',
     lunch: 'Rice + Egg Curry + Salad',
     snacks: '3 Date + 3 Amond',
     dinner: '2 Roti + 150ml Milk',
@@ -23,7 +23,7 @@ const foodData = [
   {
     id: 3,
     time: 'Monday',
-    breakfast: '1 Boil Egg + 2 Roti + Boot Dal',
+    breakfast: '2 Roti + Vegetables + Banana',
     lunch: 'Rice + Chicken + Salad',
     snacks: '3 Date + Tea',
     dinner: '2 Roti + 1 Egg fry ',
@@ -31,7 +31,7 @@ const foodData = [
   {
     id: 4,
     time: 'Tuesday',
-    breakfast: '2 Roti + Vegetables',
+    breakfast: '2 Roti + Vegetables + Dal',
     lunch: 'Rice + Fish Curry + Salad',
     snacks: '3 Date + 3 Almond',
     dinner: 'Rice + Kalojira Vorta',
@@ -120,6 +120,9 @@ const FoodControl = () => {
             })}
         </tbody>
       </Table>
+      <div className="">
+        <h3 className="text-light p-1">Tips: দিনে ৩.৫ লিটার পানি পান করো</h3>
+      </div>
     </div>
   );
 };
