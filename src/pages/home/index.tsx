@@ -5,10 +5,8 @@ import img3 from '../../assets/images/slider03.jpg';
 import myAudio from '../../assets/audio/my-heart.mp3';
 import './index.css';
 import PageTitle from '../pageTitle/pageTitle';
-import { Carousel, ToggleButton } from 'react-bootstrap';
+import { Carousel } from 'react-bootstrap';
 import { useState } from 'react';
-import { DiVim } from 'react-icons/di';
-import { ImInfo } from 'react-icons/im';
 
 const data = [
   {
