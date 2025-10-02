@@ -21,12 +21,12 @@ const Index = () => {
             <button className="bg-dark rounded-5" onClick={handleClick}>
               {isLoggedIn ? (
                 <div className="text-info ">
-                  My Principle's
+                  Log Out
                   <FaBalanceScale className="ms-1 text-info" />
                 </div>
               ) : (
                 <div className="text-danger">
-                  My Principle's
+                  Log In
                   <FaBalanceScale className="ms-1 text-danger" />
                 </div>
               )}
@@ -72,12 +72,14 @@ const Index = () => {
             >
               Main-Principle's
             </NavLink>
-            <NavLink
-              className="m-auto pe-4 text-decoration-none fw-bold"
-              to={'/generalRules'}
-            >
-              General-rules
-            </NavLink>
+            {isLoggedIn && (
+              <NavLink
+                className="m-auto pe-4 text-decoration-none fw-bold"
+                to={'/generalRules'}
+              >
+                General-rules
+              </NavLink>
+            )}
             <Dropdown className="m-auto pe-4 text-decoration-none fw-bold">
               <Dropdown.Toggle
                 variant="my-margin text-primary"

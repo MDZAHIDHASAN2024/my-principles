@@ -13,47 +13,16 @@ import TimeSavingFormula from '../pages/timeSavingFormula/timeSavingFormula';
 import TourPlanFormula from '../pages/tourPlanFormula/tourPlanFormula';
 import Works from '../pages/works/works';
 import FoodControl from '../pages/foodControl/foodControl';
-import { useState } from 'react';
-import ProtectedRoutes from './protectedRoutes';
 
 const Index = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   return (
     <BrowserRouter>
-      <button
-        className=" btn text-light  bg-danger"
-        onClick={() => setIsLoggedIn(!isLoggedIn)}
-      >
-        {isLoggedIn ? 'Log Out' : 'Log In'}
-      </button>
       <Navabar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/intro"
-          element={
-            <ProtectedRoutes isLoggedIn={isLoggedIn}>
-              <Intro />
-            </ProtectedRoutes>
-          }
-        />
-        <Route
-          path="/foodControl"
-          element={
-            <ProtectedRoutes isLoggedIn={isLoggedIn}>
-              <FoodControl />
-            </ProtectedRoutes>
-          }
-        />
-        <Route
-          path="/works"
-          element={
-            <ProtectedRoutes isLoggedIn={isLoggedIn}>
-              <Works />
-            </ProtectedRoutes>
-          }
-        />
+        <Route path="/intro" element={<Intro />} />
+        <Route path="/foodControl" element={<FoodControl />} />
+        <Route path="/works" element={<Works />} />
         <Route path="/principles" element={<Principles />} />
         <Route path="/generalRules" element={<GeneralRules />} />
         <Route path="/moneySavingFormula" element={<MoneySavingFormula />} />

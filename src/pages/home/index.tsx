@@ -181,7 +181,7 @@ const Home = () => {
               className="btn btn-primary text-light mt-2"
               onClick={() => setToggle(!toggle)}
             >
-              {toggle ? 'Click to Hide' : 'Click to see Effective Date'}
+              {toggle ? 'Click to Hide' : 'Click to Show Effective Date'}
               {toggle && (
                 <div className=" bg-dark text-light text-center border  p-1">
                   <p>3/10/2025 English</p>
