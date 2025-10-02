@@ -18,11 +18,14 @@ import ProtectedRoutes from './protectedRoutes';
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  console.log(isLoggedIn);
+
   return (
     <BrowserRouter>
-      <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
-        {isLoggedIn ? '' : ''}
+      <button
+        className=" btn text-light  bg-danger"
+        onClick={() => setIsLoggedIn(!isLoggedIn)}
+      >
+        {isLoggedIn ? 'Log Out' : 'Log In'}
       </button>
       <Navabar />
       <Routes>
