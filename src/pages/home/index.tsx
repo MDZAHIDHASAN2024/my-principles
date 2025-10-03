@@ -1,14 +1,15 @@
 // my css
-import img1 from '../../assets/images/slider01.jpg';
-import img2 from '../../assets/images/slider02.jpg';
-import img3 from '../../assets/images/slider03.jpg';
+// import img1 from '../../assets/images/slider01.jpg';
+// import img2 from '../../assets/images/slider02.jpg';
+// import img3 from '../../assets/images/slider03.jpg';
 
 import myAudio from '../../assets/audio/my-heart.mp3';
 import './index.css';
 import PageTitle from '../pageTitle/pageTitle';
 
 import { useState } from 'react';
-import { Carousel } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
+// import { Carousel } from 'react-bootstrap';
 
 const data = [
   {
@@ -116,11 +117,47 @@ const data = [
 const Home = () => {
   const [search, setSearch] = useState('');
   const [toggle, setToggle] = useState(false);
+  const navigate = useNavigate();
   return (
     <div className="container bg-dark ">
       <PageTitle title="Home" />
-
-      <Carousel>
+      <img
+        className="img-fluid"
+        src="https://images.pexels.com/photos/36704/pexels-photo.jpg"
+        alt=""
+      />
+      <div>
+        <div className="my-bg2 text-center">
+          <button
+            onClick={() => {
+              navigate('/jahannam');
+            }}
+            className=" btn bg-danger text-light    me-5"
+          >
+            জাহান্নাম দেখতে ক্লিক করুন
+          </button>
+          <button
+            onClick={() => {
+              navigate('/jannat');
+            }}
+            className=" btn bg-primary text-light ms-5"
+          >
+            জান্নাত দেখতে ক্লিক করুন
+          </button>
+        </div>
+        <h1 className=" my-bg1 p-2 text-center">
+          এই পার্থিব জীবণ খেল-তামাশা ব্যতীত কিছুই নয় ! সুরা-আনকাবুত (৬৪)
+        </h1>
+        <h1 className=" my-bg1 p-2 text-center">
+          জাহান্নামকে প্রবৃত্তি এবং জান্নাত কস্ট দ্বারা পরিবেস্টন করা হয়েছে !
+          (বুখারী-মুসলিম ২৮২২)
+        </h1>
+        <h1 className=" my-bg1 p-2 text-center">
+          দুনিয়াতে এমন ভাবে জীবণ-যাপন করো যেন তুমি একজন অপরিচিত মুসাফির অথবা
+          পথোচারী আর সর্বদা নিজেকে কবরবাসী মনে করো !!! মিশকাত-(৫২৭৪)
+        </h1>
+      </div>
+      {/* <Carousel>
         <Carousel.Item>
           <img src={img1} className="d-block w-100" alt="Slider Picture" />
           <Carousel.Caption>
@@ -152,7 +189,7 @@ const Home = () => {
             </p>
           </Carousel.Caption>
         </Carousel.Item>
-      </Carousel>
+      </Carousel> */}
       <div className="bg-secondary text-center p-1 border text-info fw-bolder">
         <h2>Sura Ad-Dukhan 44: 40-59</h2>
         <audio src={myAudio} controls /> <br />

@@ -13,6 +13,8 @@ import TimeSavingFormula from '../pages/timeSavingFormula/timeSavingFormula';
 import TourPlanFormula from '../pages/tourPlanFormula/tourPlanFormula';
 import Works from '../pages/works/works';
 import FoodControl from '../pages/foodControl/foodControl';
+import Jahannam from '../pages/jahannam/hahannam';
+import Jannat from '../pages/jannat/jannat';
 
 const Index = () => {
   return (
@@ -33,6 +35,8 @@ const Index = () => {
         <Route path="/timeSavingFormula" element={<TimeSavingFormula />} />
         <Route path="/tourPlanFormula" element={<TourPlanFormula />} />
         {/* <Route path="/myContract" element={<MyContract />} /> */}
+        <Route path="/jahannam" element={<Jahannam />} />
+        <Route path="/jannat" element={<Jannat />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />
