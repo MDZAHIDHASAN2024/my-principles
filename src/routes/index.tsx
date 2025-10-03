@@ -32,6 +32,7 @@ const Index = () => {
         />
         <Route path="/timeSavingFormula" element={<TimeSavingFormula />} />
         <Route path="/tourPlanFormula" element={<TourPlanFormula />} />
+        {/* <Route path="/myContract" element={<MyContract />} /> */}
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />

@@ -105,6 +105,12 @@ const Index = () => {
                 </NavLink>
               </Dropdown.Menu>
             </Dropdown>
+            {/* <NavLink
+              className="m-auto pe-4 text-decoration-none fw-bold"
+              to={'/myContract'}
+            >
+              My-Contract-List
+            </NavLink> */}
           </Nav>
         </Navbar.Collapse>
       </Container>

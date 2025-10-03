@@ -71,12 +71,12 @@ const MoneySavingFormula = () => {
               key={tip.id}
             >
               {
-                <p>
+                <div>
                   <h5 className="bg-secondary d-inline-block text-info p-1 me-1">
                     Tips No: {tip.id}
                   </h5>
                   {tip.tips}
-                </p>
+                </div>
               }
             </div>
           );

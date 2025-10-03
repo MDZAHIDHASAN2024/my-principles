@@ -2,11 +2,13 @@
 import img1 from '../../assets/images/slider01.jpg';
 import img2 from '../../assets/images/slider02.jpg';
 import img3 from '../../assets/images/slider03.jpg';
+
 import myAudio from '../../assets/audio/my-heart.mp3';
 import './index.css';
 import PageTitle from '../pageTitle/pageTitle';
-import { Carousel } from 'react-bootstrap';
+
 import { useState } from 'react';
+import { Carousel } from 'react-bootstrap';
 
 const data = [
   {
@@ -117,6 +119,7 @@ const Home = () => {
   return (
     <div className="container bg-dark ">
       <PageTitle title="Home" />
+
       <Carousel>
         <Carousel.Item>
           <img src={img1} className="d-block w-100" alt="Slider Picture" />
@@ -163,7 +166,8 @@ const Home = () => {
       <div className="bg-dark text-light">
         {data
           .filter((sura) => {
-            return search === '' ? sura : sura.ayatNo.includes(search);
+            if (search === '') return true;
+            return sura.ayatNo === search;
           })
           .map((sura) => {
             return (
@@ -182,15 +186,15 @@ const Home = () => {
               onClick={() => setToggle(!toggle)}
             >
               {toggle ? 'Click to Hide' : 'Click to Show Effective Date'}
-              {toggle && (
-                <div className=" bg-dark text-light text-center border  p-1">
-                  <p>3/10/2025 English</p>
-                  <p>18/06/1432 Bangla</p>
-                  <p>10/04/1447 Arabic</p>
-                  <p>Friday</p>
-                </div>
-              )}
             </button>
+            {toggle && (
+              <div className=" bg-dark text-light text-center  p-1">
+                <p>3/10/2025 English</p>
+                <p>18/06/1432 Bangla</p>
+                <p>10/04/1447 Arabic</p>
+                <p>Friday</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
