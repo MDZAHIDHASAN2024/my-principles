@@ -7,7 +7,7 @@ const foodData = [
   {
     id: 1,
     time: 'Saturday',
-    breakfast: '1 Boil Egg + 2 Roti + Vegetables',
+    breakfast: '1 Boil Egg + Rice + Vegetables',
     lunch: 'Rice + Fish Curry + Dal + Salad',
     snacks: '3 Date',
     dinner: '2 Roti + Vegetables ',
@@ -15,7 +15,7 @@ const foodData = [
   {
     id: 2,
     time: 'Sunday',
-    breakfast: 'Rice + Any Vorta Items',
+    breakfast: 'Rice + Any Vorta Items + Banana',
     lunch: 'Rice + Egg Curry + Salad',
     snacks: '3 Date + 3 Amond',
     dinner: '2 Roti + 150ml Milk',
@@ -23,7 +23,7 @@ const foodData = [
   {
     id: 3,
     time: 'Monday',
-    breakfast: '2 Roti + Vegetables + Banana',
+    breakfast: 'Rice + Vegetables ',
     lunch: 'Rice + Chicken + Salad',
     snacks: '3 Date + Tea',
     dinner: '2 Roti + 1 Egg fry ',
@@ -31,7 +31,7 @@ const foodData = [
   {
     id: 4,
     time: 'Tuesday',
-    breakfast: '2 Roti + Vegetables + Dal',
+    breakfast: '1 Boil + Rice + Vegetables + Dal',
     lunch: 'Rice + Fish Curry + Salad',
     snacks: '3 Date + 3 Almond',
     dinner: 'Rice + Kalojira Vorta',
@@ -39,7 +39,7 @@ const foodData = [
   {
     id: 5,
     time: 'Wednesday',
-    breakfast: '1 Boil Egg + 2 Roti + Vegetables',
+    breakfast: 'Rice + Vegetables',
     lunch: 'Rice + Chicken + Salad',
     snacks: '3 Date + Coffee',
     dinner: '2 Roti + Dal ',
@@ -47,7 +47,7 @@ const foodData = [
   {
     id: 6,
     time: 'Thursday',
-    breakfast: '2 Roti + Vegetables',
+    breakfast: '1 Boil Egg + Vegetables',
     lunch: 'Rice + Egg Curry + Salad',
     snacks: '3 Date + 3 Almond',
     dinner: '2 Roti + Vegetables',
@@ -55,7 +55,7 @@ const foodData = [
   {
     id: 7,
     time: 'Friday',
-    breakfast: '2 Boil Egg',
+    breakfast: '2 Roti + Vegetables',
     lunch: 'Rice + Chicken/Beef Curry + Salad',
     snacks: '3 Date + 3 Amond + Any Fruits',
     dinner: '2 Roti + 150ml Milk',

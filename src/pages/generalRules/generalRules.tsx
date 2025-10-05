@@ -72,7 +72,7 @@ const generalRules = [
   },
   {
     id: 18,
-    rule: 'কারো কিছু নেওয়া এবং খাওয়া নিষেধ !',
+    rule: 'অলসতা করা নিষেধ !',
   },
   {
     id: 19,
@@ -142,13 +142,13 @@ const GeneralRules = () => {
         .filter((rule) => {
           return searchRule === ''
             ? rule
-            : rule.id.toString().includes(searchRule.toString());
+            : rule.id.toString().match(searchRule.toString());
         })
         .map((rule) => {
           return (
             <div
               key={rule.id}
-              className="bg-secondary text-light m-2 mt-0 p-2 border border-danger border-2 "
+              className="bg-secondary text-light m-2 mt-0 p-2 border border-info border-2 "
             >
               <h3 className="bg-dark d-inline-block p-1">RuleNo : {rule.id}</h3>
               <h3>{rule.rule}</h3>
