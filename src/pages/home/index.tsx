@@ -226,10 +226,10 @@ const Home = () => {
             </button>
             {toggle && (
               <div className=" bg-dark text-light text-center  p-1">
-                <p>6/10/2025 English</p>
-                <p>21/06/1432 Bangla</p>
-                <p>13/04/1447 Arabic</p>
-                <p>Monday</p>
+                <p>8/10/2025 English</p>
+                <p>23/06/1432 Bangla</p>
+                <p>15/04/1447 Arabic</p>
+                <p>Wednesday</p>
               </div>
             )}
           </div>

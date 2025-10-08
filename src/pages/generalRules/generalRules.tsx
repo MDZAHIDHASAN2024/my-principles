@@ -122,6 +122,10 @@ const generalRules = [
     id: 30,
     rule: 'মধ্যম পন্থা অবলম্বন করো !',
   },
+  {
+    id: 31,
+    rule: 'মাসে ২ বার সালতাতুল চাশদ আদায় করো !',
+  },
 ];
 
 const GeneralRules = () => {
