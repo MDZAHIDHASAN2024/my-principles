@@ -230,7 +230,7 @@ const Home = () => {
                 <p>25/06/1432 Bangla</p>
                 <p>17/04/1447 Arabic</p>
                 <p>Friday</p>
-                <p>11:00AM</p>
+                <p>12:00PM</p>
               </div>
             )}
           </div>
