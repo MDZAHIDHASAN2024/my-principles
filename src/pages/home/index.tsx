@@ -1,7 +1,4 @@
 // my css
-import img1 from '../../assets/images/profile.jpg';
-// import img2 from '../../assets/images/slider02.jpg';
-// import img3 from '../../assets/images/slider03.jpg';
 
 import myAudio from '../../assets/audio/my-heart.mp3';
 import './index.css';
