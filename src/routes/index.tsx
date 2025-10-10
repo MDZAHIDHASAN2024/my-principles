@@ -13,7 +13,7 @@ import TimeSavingFormula from '../pages/timeSavingFormula/timeSavingFormula';
 import TourPlanFormula from '../pages/tourPlanFormula/tourPlanFormula';
 import Works from '../pages/works/works';
 import FoodControl from '../pages/foodControl/foodControl';
-import Jahannam from '../pages/jahannam/hahannam';
+import Jahannam from '../pages/jahannam/jahannam';
 import Jannat from '../pages/jannat/jannat';
 
 const Index = () => {
