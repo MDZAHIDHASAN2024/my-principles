@@ -132,7 +132,7 @@ const Home = () => {
             onClick={() => {
               navigate('/jahannam');
             }}
-            className=" btn bg-danger text-light    me-5"
+            className=" btn bg-danger text-light    ms-5"
           >
             জাহান্নাম দেখতে ক্লিক করুন
           </button>
@@ -140,7 +140,7 @@ const Home = () => {
             onClick={() => {
               navigate('/jannat');
             }}
-            className=" btn bg-primary text-light ms-5"
+            className=" btn bg-primary text-light me-5"
           >
             জান্নাত দেখতে ক্লিক করুন
           </button>
