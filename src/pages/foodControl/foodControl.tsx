@@ -42,7 +42,7 @@ const foodData = [
     breakfast: 'Rice + Any Curry',
     lunch: 'Rice + Chicken + Salad',
     snacks: '3 Date + Coffee',
-    dinner: '3 Date + 1/2 Cucumber + 1 Boil Egg',
+    dinner: '2 Roti + Vegetables',
   },
   {
     id: 6,
