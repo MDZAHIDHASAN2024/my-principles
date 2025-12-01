@@ -71,6 +71,12 @@ const Works = () => {
           </tr>
         </tbody>
       </Table>
+      <div className="div">
+        <p>1. English 5 Word</p>
+        <p>2. Linux 1 CMD,</p>
+        <p>3. Other's knowledge Gather,</p>
+        <p>4. LAD Meditation</p>
+      </div>
     </div>
   );
 };
