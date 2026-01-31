@@ -121,7 +121,10 @@ const FoodControl = () => {
         </tbody>
       </Table>
       <div className="">
-        <h3 className="text-light p-1">Tips: দিনে ৩.৫ লিটার পানি পান করো</h3>
+        <h3 className="text-info p-1">
+          Tips#: ১ জনের খাবার ২ জন, ২ জনের খাবার ৩ জন এর জন্য যথেষ্ট!
+        </h3>
+        <h3 className="text-info p-1">Tips#: দিনে ৩.৫ লিটার পানি পান করো!</h3>
       </div>
     </div>
   );
