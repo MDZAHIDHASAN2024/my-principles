@@ -22,16 +22,16 @@ const Works = () => {
         </thead>
         <tbody>
           <tr>
-            <td>4:30AM</td>
-            <td>5:30AM</td>
+            <td>4:00AM</td>
+            <td>5:00AM</td>
             <td>Salat, Quran, Drink A Glass of Water</td>
             <td>1</td>
           </tr>
           <tr>
-            <td>5:30AM</td>
+            <td>5:00AM</td>
             <td>6:00AM</td>
             <td>Excercise</td>
-            <td>1/2</td>
+            <td>1</td>
           </tr>
           <tr>
             <td>6:00AM</td>
@@ -59,15 +59,15 @@ const Works = () => {
           </tr>
           <tr>
             <td>9:00PM</td>
-            <td>9:30PM</td>
+            <td>10:00PM</td>
             <td>Family Time, All Work Review</td>
             <td>1</td>
           </tr>
           <tr>
-            <td>9:30PM</td>
-            <td>4:30AM</td>
+            <td>10:00PM</td>
+            <td>4:00AM</td>
             <td>Sleep</td>
-            <td>7</td>
+            <td>6</td>
           </tr>
         </tbody>
       </Table>
