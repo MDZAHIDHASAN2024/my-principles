@@ -197,7 +197,7 @@ const Home = () => {
                 <p>08/02/2026 English</p>
                 <p>25/10/1432 Bangla</p>
                 <p>19/08/1447 Arabic</p>
-                <p>Sanday</p>
+                <p>Sunday</p>
               </div>
             )}
           </div>

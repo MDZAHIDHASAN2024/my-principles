@@ -49,8 +49,8 @@ const Works = () => {
             <td>8:00AM</td>
             <td>8:00PM</td>
             <td>
-              Office Works, Salat, 10 min Power Nap, English Listening, Bangla
-              Typing
+              Office Works, Salat, 10 min Power Nap, English Listening Practice,
+              Bangla Typing Test
             </td>
             <td>12</td>
           </tr>
