@@ -48,7 +48,10 @@ const Works = () => {
           <tr>
             <td>8:00AM</td>
             <td>8:00PM</td>
-            <td>Office Works, Salat</td>
+            <td>
+              Office Works, Salat, 10 min Power Nap, English Listening, Bangla
+              Typing
+            </td>
             <td>12</td>
           </tr>
           <tr>
