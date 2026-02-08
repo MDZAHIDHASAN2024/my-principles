@@ -30,7 +30,7 @@ const Works = () => {
           <tr>
             <td>5:00AM</td>
             <td>6:00AM</td>
-            <td>Excercise</td>
+            <td>Excercise, English</td>
             <td>1</td>
           </tr>
           <tr>
