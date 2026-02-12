@@ -7,7 +7,7 @@ const foodData = [
   {
     id: 1,
     time: 'Saturday',
-    breakfast: 'Rice + Vorta Item',
+    breakfast: 'Rice + Vorta Item || Sweet Potato',
     lunch: 'Rice + Fish Curry + Dal + Salad',
     snacks: '3 Date + 1/2 Cucumber',
     dinner: 'Rice + Vegetables ',
@@ -31,7 +31,7 @@ const foodData = [
   {
     id: 4,
     time: 'Tuesday',
-    breakfast: 'Rice + Vegetables + Dal',
+    breakfast: 'Rice + Vegetables + Dal || Sweet Potato  ',
     lunch: 'Rice + Fish Curry + Salad',
     snacks: '3 Date + 3 Almond',
     dinner: 'Rice + Any Curry',
@@ -58,7 +58,7 @@ const foodData = [
     breakfast: 'Rice + Any Curry',
     lunch: 'Rice + Chicken/Beef Curry + Salad',
     snacks: '3 Date + 3 Amond + Any Fruits',
-    dinner: 'Potato Fry/Half Boil Duck Egg',
+    dinner: 'Potato Fry/Half Boil Duck Egg || Sweet Potato',
   },
 ];
 
@@ -125,7 +125,9 @@ const FoodControl = () => {
           Tips:# ১ জনের খাবার ২ জন, ২ জনের খাবার ৩ জন এর জন্য যথেষ্ট!
         </h3>
         <h3 className="text-info p-1">Tips:# দিনে ৩.৫ লিটার পানি পান করো!</h3>
-        <h3 className="text-info p-1">Tips:# রাতের খাবার ঘুমের ২–৩ ঘণ্টা আগে!</h3>
+        <h3 className="text-info p-1">
+          Tips:# রাতের খাবার ঘুমের ২–৩ ঘণ্টা আগে!
+        </h3>
         <h3 className="text-info p-1">Tips:# চিনি ও সফট ড্রিংক খাবেন না!</h3>
       </div>
     </div>
