@@ -3,7 +3,7 @@ const Footer = () => {
     <div className="container-fluid bg-dark text-light text-center ">
       <p>
         {' '}
-        &#9400; All Rights Reserved 2025 Developed by Zahid (V.11.04
+        &#9400; All Rights Reserved 2025 Developed by Zahid (V.11.05
         Version){' '}
       </p>
     </div>
