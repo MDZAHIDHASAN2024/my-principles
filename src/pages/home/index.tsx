@@ -1,206 +1,1196 @@
-// my css
-
+import { useState, useEffect, useRef, useCallback } from 'react';
 import myAudio from '../../assets/audio/my-heart.mp3';
-import './index.css';
-import PageTitle from '../pageTitle/pageTitle';
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-// import { Carousel } from 'react-bootstrap';
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-const data = [
+interface Ayat {
+  id: number;
+  ayatNo: string;
+  arabic: string;
+  bangla: string;
+  startTime: number; // seconds
+}
+
+interface Quote {
+  text: string;
+  ref: string;
+}
+
+type Section = 'all' | 'jahannam' | 'jannat';
+
+// ─── Data with timestamps ─────────────────────────────────────────────────────
+// ⚠️ startTime গুলো আপনার অডিও শুনে নিজে সঠিক করুন।
+// প্রতিটি আয়াত কত সেকেন্ডে শুরু হয় সেটা দিন।
+
+const data: Ayat[] = [
   {
     id: 1,
     ayatNo: '40',
-    sura: ' إِنَّ يَوْمَ الْفَصْلِ مِيقَاتُهُمْ أَجْمَعِينَ  নিশ্চয় ফয়সালার দিন তাদের সবারই নির্ধারিত সময়।',
+    startTime: 0,
+    arabic: 'إِنَّ يَوْمَ الْفَصْلِ مِيقَاتُهُمْ أَجْمَعِينَ',
+    bangla: 'নিশ্চয় ফয়সালার দিন তাদের সবারই নির্ধারিত সময়।',
   },
   {
     id: 2,
     ayatNo: '41',
-    sura: ' يَوْمَ لَا يُغْنِي مَوْلًى عَن مَّوْلًى شَيْئًا وَلَا هُمْ يُنصَرُونَ যেদিন কোন বন্ধুই কোন বন্ধুর উপকারে আসবে না এবং তারা সাহায্যপ্রাপ্তও হবে না।',
+    startTime: 7.8,
+    arabic:
+      'يَوْمَ لَا يُغْنِي مَوْلًى عَن مَّوْلًى شَيْئًا وَلَا هُمْ يُنصَرُونَ',
+    bangla:
+      'যেদিন কোন বন্ধুই কোন বন্ধুর উপকারে আসবে না এবং তারা সাহায্যপ্রাপ্তও হবে না।',
   },
   {
     id: 3,
     ayatNo: '42',
-    sura: ' إِلَّا مَن رَّحِمَ اللَّهُ ۚ إِنَّهُ هُوَ الْعَزِيزُ الرَّحِيمُ তবে আল্লাহ যার প্রতি দয়া করেন, তার কথা ভিন্ন। নিশ্চয় তিনি পরাক্রমশালী দয়াময়।',
+    startTime: 22.31,
+    arabic: 'إِلَّا مَن رَّحِمَ اللَّهُ ۚ إِنَّهُ هُوَ الْعَزِيزُ الرَّحِيمُ',
+    bangla:
+      'তবে আল্লাহ যার প্রতি দয়া করেন, তার কথা ভিন্ন। নিশ্চয় তিনি পরাক্রমশালী দয়াময়।',
   },
   {
     id: 4,
     ayatNo: '43',
-    sura: ' إِنَّ شَجَرَتَ الزَّقُّومِ নিশ্চয় যাক্কুম বৃক্ষ',
+    startTime: 34.95,
+    arabic: 'إِنَّ شَجَرَتَ الزَّقُّومِ',
+    bangla: 'নিশ্চয় যাক্কুম বৃক্ষ',
   },
   {
     id: 5,
     ayatNo: '44',
-    sura: ' طَعَامُ الْأَثِيمِ পাপীর খাদ্য হবে',
+    startTime: 38.87,
+    arabic: 'طَعَامُ الْأَثِيمِ',
+    bangla: 'পাপীর খাদ্য হবে',
   },
   {
     id: 6,
     ayatNo: '45',
-    sura: ' كَالْمُهْلِ يَغْلِي فِي الْبُطُونِ গলিত তাম্রের মত পেটে ফুটতে থাকবে।',
+    startTime: 42.65,
+    arabic: 'كَالْمُهْلِ يَغْلِي فِي الْبُطُونِ',
+    bangla: 'গলিত তাম্রের মত পেটে ফুটতে থাকবে।',
   },
   {
     id: 7,
     ayatNo: '46',
-    sura: ' كَغَلْيِ الْحَمِيمِ যেমন ফুটে পানি।',
+    startTime: 49.27,
+    arabic: 'كَغَلْيِ الْحَمِيمِ',
+    bangla: 'যেমন ফুটে পানি।',
   },
   {
     id: 8,
     ayatNo: '47',
-    sura: ' خُذُوهُ فَاعْتِلُوهُ إِلَىٰ سَوَاءِ الْجَحِيمِ একে ধর এবং টেনে নিয়ে যাও জাহান্নামের মধ্যস্থলে,',
+    startTime: 53.92,
+    arabic: 'خُذُوهُ فَاعْتِلُوهُ إِلَىٰ سَوَاءِ الْجَحِيمِ',
+    bangla: 'একে ধর এবং টেনে নিয়ে যাও জাহান্নামের মধ্যস্থলে,',
   },
   {
     id: 9,
     ayatNo: '48',
-    sura: ' ثُمَّ صُبُّوا فَوْقَ رَأْسِهِ مِنْ عَذَابِ الْحَمِيمِ অতঃপর তার মাথার উপর ফুটন্ত পানির আযাব ঢেলে দাও',
+    startTime: 62.22,
+    arabic: 'ثُمَّ صُبُّوا فَوْقَ رَأْسِهِ مِنْ عَذَابِ الْحَمِيمِ',
+    bangla: 'অতঃপর তার মাথার উপর ফুটন্ত পানির আযাব ঢেলে দাও',
   },
   {
     id: 10,
     ayatNo: '49',
-    sura: ' ذُقْ إِنَّكَ أَنتَ الْعَزِيزُ الْكَرِيمُ স্বাদ গ্রহণ কর, তুমি তো সম্মানিত, সম্ভ্রান্ত।',
+    startTime: 70.86,
+    arabic: 'ذُقْ إِنَّكَ أَنتَ الْعَزِيزُ الْكَرِيمُ',
+    bangla: 'স্বাদ গ্রহণ কর, তুমি তো সম্মানিত, সম্ভ্রান্ত।',
   },
   {
     id: 11,
     ayatNo: '50',
-    sura: ' إِنَّ هَـٰذَا مَا كُنتُم بِهِ تَمْتَرُونَ এ সম্পর্কে তোমরা সন্দেহে পতিত ছিলে।',
+    startTime: 79.93,
+    arabic: 'إِنَّ هَـٰذَا مَا كُنتُم بِهِ تَمْتَرُونَ',
+    bangla: 'এ সম্পর্কে তোমরা সন্দেহে পতিত ছিলে।',
   },
   {
     id: 12,
     ayatNo: '51',
-    sura: ' إِنَّ الْمُتَّقِينَ فِي مَقَامٍ أَمِينٍ নিশ্চয়ই মুত্তাকীরা থাকবে নিরাপদ স্থানে,',
+    startTime: 89.43,
+    arabic: 'إِنَّ الْمُتَّقِينَ فِي مَقَامٍ أَمِينٍ',
+    bangla: 'নিশ্চয়ই মুত্তাকীরা থাকবে নিরাপদ স্থানে,',
   },
   {
     id: 13,
     ayatNo: '52',
-    sura: ' فِي جَنَّاتٍ وَعُيُونٍ বাগান আর ঝরণার মাঝে',
+    startTime: 98.33,
+    arabic: 'فِي جَنَّاتٍ وَعُيُونٍ',
+    bangla: 'বাগান আর ঝরণার মাঝে',
   },
   {
     id: 14,
     ayatNo: '53',
-    sura: ' يَلْبَسُونَ مِن سُندُسٍ وَإِسْتَبْرَقٍ مُّتَقَابِلِينَ তারা পরিধান করবে পাতলা ও পুরু রেশমী কাপড়, আর বসবে মুখোমুখী হয়ে।',
+    startTime: 106.63,
+    arabic: 'يَلْبَسُونَ مِن سُندُسٍ وَإِسْتَبْرَقٍ مُّتَقَابِلِينَ',
+    bangla: 'তারা পরিধান করবে পাতলা ও পুরু রেশমী কাপড়, আর বসবে মুখোমুখী হয়ে।',
   },
   {
     id: 15,
     ayatNo: '54',
-    sura: ' كَذَٰلِكَ وَزَوَّجْنَاهُم بِحُورٍ عِينٍ এ রকমই হবে, আর তাদের বিয়ে দিয়ে দেব ডাগর ডাগর সুন্দর উজ্জ্বল চোখওয়ালা কুমারীদের (হুরদের) সাথে।',
+    startTime: 125.7,
+    arabic: 'كَذَٰلِكَ وَزَوَّجْنَاهُم بِحُورٍ عِينٍ',
+    bangla:
+      'এ রকমই হবে, আর তাদের বিয়ে দিয়ে দেব ডাগর ডাগর সুন্দর উজ্জ্বল চোখওয়ালা কুমারীদের সাথে।',
   },
   {
     id: 16,
     ayatNo: '55',
-    sura: ' يَدْعُونَ فِيهَا بِكُلِّ فَاكِهَةٍ آمِنِينَ তারা সেখানে শান্ত মনে বিভিন্ন ফল-মূল আনতে বলবে।',
+    startTime: 133.61,
+    arabic: 'يَدْعُونَ فِيهَا بِكُلِّ فَاكِهَةٍ آمِنِينَ',
+    bangla: 'তারা সেখানে শান্ত মনে বিভিন্ন ফল-মূল আনতে বলবে।',
   },
   {
     id: 17,
     ayatNo: '56',
-    sura: ' لَا يَذُوقُونَ فِيهَا الْمَوْتَ إِلَّا الْمَوْتَةَ الْأُولَىٰ ۖ وَوَقَاهُمْ عَذَابَ الْجَحِيمِ তারা সেখানে মৃত্যু আস্বাদন করবে না, প্রথম মৃত্যু ব্যতীত এবং আপনার পালনকর্তা তাদেরকে জাহান্নামের আযাব থেকে রক্ষা করবেন।',
+    startTime: 141.1,
+    arabic:
+      'لَا يَذُوقُونَ فِيهَا الْمَوْتَ إِلَّا الْمَوْتَةَ الْأُولَىٰ ۖ وَوَقَاهُمْ عَذَابَ الْجَحِيمِ',
+    bangla:
+      'তারা সেখানে মৃত্যু আস্বাদন করবে না, প্রথম মৃত্যু ব্যতীত এবং আল্লাহ তাদেরকে জাহান্নামের আযাব থেকে রক্ষা করবেন।',
   },
   {
     id: 18,
     ayatNo: '57',
-    sura: ' فَضْلًا مِّن رَّبِّكَ ۚ ذَٰلِكَ هُوَ الْفَوْزُ الْعَظِيمُ আপনার পালনকর্তার কৃপায় এটাই মহা সাফল্য।',
+    startTime: 153.23,
+    arabic: 'فَضْلًا مِّن رَّبِّكَ ۚ ذَٰلِكَ هُوَ الْفَوْزُ الْعَظِيمُ',
+    bangla: 'আপনার পালনকর্তার কৃপায় এটাই মহা সাফল্য।',
   },
   {
     id: 19,
     ayatNo: '58',
-    sura: ' فَإِنَّمَا يَسَّرْنَاهُ بِلِسَانِكَ لَعَلَّهُمْ يَتَذَكَّرُونَ আমি আপনার ভাষায় কোরআনকে সহজ করে দিয়েছি, যাতে তারা স্মরণ রাখে।',
+    startTime: 164.19,
+    arabic: 'فَإِنَّمَا يَسَّرْنَاهُ بِلِسَانِكَ لَعَلَّهُمْ يَتَذَكَّرُونَ',
+    bangla: 'আমি আপনার ভাষায় কোরআনকে সহজ করে দিয়েছি, যাতে তারা স্মরণ রাখে।',
   },
   {
     id: 20,
     ayatNo: '59',
-    sura: ' فَارْتَقِبْ إِنَّهُم مُّرْتَقِبُونَ অতএব, আপনি অপেক্ষা করুন, তারাও অপেক্ষা করছে।',
+    startTime: 174.15,
+    arabic: 'فَارْتَقِبْ إِنَّهُم مُّرْتَقِبُونَ',
+    bangla: 'অতএব, আপনি অপেক্ষা করুন, তারাও অপেক্ষা করছে।',
   },
 ];
 
-const Home = () => {
-  const [search, setSearch] = useState('');
-  const [toggle, setToggle] = useState(false);
-  const navigate = useNavigate();
+const quotes: Quote[] = [
+  {
+    text: 'এই পার্থিব জীবণ খেল-তামাশা ব্যতীত কিছুই নয়!',
+    ref: 'সুরা আনকাবুত (২৯:৬৪)',
+  },
+  {
+    text: 'জাহান্নামকে প্রবৃত্তি এবং জান্নাত কষ্ট দ্বারা পরিবেষ্টন করা হয়েছে!',
+    ref: 'বুখারী-মুসলিম ২৮২২',
+  },
+  {
+    text: 'দুনিয়াতে এমনভাবে জীবণ-যাপন করো যেন তুমি একজন অপরিচিত মুসাফির!',
+    ref: 'মিশকাত ৫২৭৪',
+  },
+];
+
+const DAYS: string[] = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+// ─── Style helpers ────────────────────────────────────────────────────────────
+
+const navBtnStyle = (active: boolean, color: string) => ({
+  padding: '8px 20px',
+  borderRadius: 24,
+  border: `1px solid ${active ? color : 'rgba(255,255,255,0.1)'}`,
+  background: active ? `${color}22` : 'transparent',
+  color: active ? color : '#8a8a8a',
+  cursor: 'pointer',
+  fontSize: 13,
+  letterSpacing: 1,
+  transition: 'all 0.3s ease',
+  fontFamily: 'inherit',
+});
+
+const actionBtnStyle = (color: string) => ({
+  padding: '5px 14px',
+  borderRadius: 20,
+  border: `1px solid ${color}44`,
+  background: `${color}11`,
+  color,
+  cursor: 'pointer',
+  fontSize: 12,
+  letterSpacing: 1,
+  fontFamily: 'inherit',
+  transition: 'all 0.2s',
+});
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+const getActiveIdFromTime = (time: number): number => {
+  let active = data[0].id;
+  for (let i = 0; i < data.length; i++) {
+    if (time >= data[i].startTime) active = data[i].id;
+    else break;
+  }
+  return active;
+};
+
+const fmtTime = (s: number): string => {
+  if (!isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+};
+
+// ─── AudioPlayer ─────────────────────────────────────────────────────────────
+
+interface AudioPlayerProps {
+  src: string;
+  audioRef: React.RefObject<HTMLAudioElement>;
+  onTimeUpdate: (time: number) => void;
+}
+
+const AudioPlayer: React.FC<AudioPlayerProps> = ({
+  src,
+  audioRef,
+  onTimeUpdate,
+}) => {
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
+  const [volume, setVolume] = useState<number>(1);
+
+  const togglePlay = (): void => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (isPlaying) a.pause();
+    else a.play();
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleTimeUpdate = (): void => {
+    const a = audioRef.current;
+    if (!a) return;
+    setCurrentTime(a.currentTime);
+    onTimeUpdate(a.currentTime);
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const a = audioRef.current;
+    if (!a) return;
+    const val = Number(e.target.value);
+    a.currentTime = val;
+    setCurrentTime(val);
+    onTimeUpdate(val);
+  };
+
+  const handleVolume = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const a = audioRef.current;
+    if (!a) return;
+    const val = Number(e.target.value);
+    a.volume = val;
+    setVolume(val);
+  };
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
   return (
-    <div className="container bg-dark ">
-      <PageTitle title="Home" />
-      <div className="container">
-        <img
-          className="img-fluid"
-          width="1370px"
-          src="data:image/jpeg;base64,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"
-          alt="Progile Image"
-        />
-      </div>
-      <div>
-        <div className="my-bg2 text-center">
-          <button
-            onClick={() => {
-              navigate('/jahannam');
+    <div
+      style={{
+        background:
+          'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(0,0,0,0.3))',
+        border: '1px solid rgba(212,175,55,0.25)',
+        borderRadius: 14,
+        padding: '18px 24px',
+        margin: '20px 0',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+      }}
+    >
+      <audio
+        ref={audioRef}
+        src={src}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={() => {
+          if (audioRef.current) setDuration(audioRef.current.duration);
+        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+      />
+
+      {/* Row 1: play + info + time */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button
+          onClick={togglePlay}
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #d4af37, #b8860b)',
+            border: 'none',
+            cursor: 'pointer',
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 20,
+            boxShadow: '0 0 20px rgba(212,175,55,0.35)',
+            transition: 'all 0.2s',
+          }}
+        >
+          {isPlaying ? '⏸' : '▶'}
+        </button>
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              fontSize: 13,
+              color: '#d4af37',
+              letterSpacing: 2,
+              marginBottom: 2,
             }}
-            className=" btn bg-danger text-light    ms-5"
           >
-            জাহান্নাম দেখতে ক্লিক করুন
-          </button>
-          <button
-            onClick={() => {
-              navigate('/jannat');
-            }}
-            className=" btn bg-primary text-light me-5"
-          >
-            জান্নাত দেখতে ক্লিক করুন
-          </button>
+            🎵 সূরা আদ-দুখান তিলাওয়াত
+          </div>
+          <div style={{ fontSize: 11, color: '#5a5a4a' }}>
+            অডিও চললে আয়াত স্বয়ংক্রিয়ভাবে হাইলাইট ও স্ক্রল হবে
+          </div>
         </div>
-        <h1 className=" my-bg1 p-2 text-center">
-          এই পার্থিব জীবণ খেল-তামাশা ব্যতীত কিছুই নয় ! সুরা-আনকাবুত (৬৪)
-        </h1>
-        <h1 className=" my-bg1 p-2 text-center">
-          জাহান্নামকে প্রবৃত্তি এবং জান্নাত কস্ট দ্বারা পরিবেস্টন করা হয়েছে !
-          (বুখারী-মুসলিম ২৮২২)
-        </h1>
-        <h1 className=" my-bg1 p-2 text-center">
-          দুনিয়াতে এমন ভাবে জীবণ-যাপন করো যেন তুমি একজন অপরিচিত মুসাফির অথবা
-          পথোচারী আর সর্বদা নিজেকে কবরবাসী মনে করো !!! মিশকাত-(৫২৭৪)
-        </h1>
+        <div
+          style={{
+            fontSize: 12,
+            color: '#8a7a5a',
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
+          {fmtTime(currentTime)} / {fmtTime(duration)}
+        </div>
       </div>
 
-      <div className="bg-secondary text-center p-1 border text-info fw-bolder">
-        <h2>Sura Ad-Dukhan 44: 40-59</h2>
-        <audio src={myAudio} controls /> <br />
+      {/* Progress bar */}
+      <div style={{ position: 'relative', height: 6 }}>
+        <div
+          style={{
+            height: 6,
+            borderRadius: 3,
+            background: 'rgba(255,255,255,0.08)',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              width: `${progress}%`,
+              background: 'linear-gradient(90deg, #b8860b, #f0c040)',
+              borderRadius: 3,
+              transition: 'width 0.3s linear',
+            }}
+          />
+        </div>
         <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search Ayat 40-59"
+          type="range"
+          min={0}
+          max={duration || 0}
+          step={0.1}
+          value={currentTime}
+          onChange={handleSeek}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            opacity: 0,
+            cursor: 'pointer',
+            height: '100%',
+          }}
         />
       </div>
-      <div className="bg-dark text-light">
-        {data
-          .filter((sura) => {
-            if (search === '') return true;
-            return sura.ayatNo === search;
-          })
-          .map((sura) => {
-            return (
-              <div className="border p-2" key={sura.id}>
-                <h2>{sura.sura}</h2>
-                <p>আয়াত-{sura.ayatNo}</p>
-              </div>
-            );
-          })}
+
+      {/* Volume */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 14, color: '#6a6a5a' }}>
+          {volume === 0 ? '🔇' : volume < 0.5 ? '🔈' : '🔊'}
+        </span>
+        <div
+          style={{
+            position: 'relative',
+            flex: 1,
+            maxWidth: 100,
+            height: 4,
+            background: 'rgba(255,255,255,0.08)',
+            borderRadius: 2,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              height: '100%',
+              width: `${volume * 100}%`,
+              background: 'rgba(212,175,55,0.5)',
+              borderRadius: 2,
+            }}
+          />
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.01}
+            value={volume}
+            onChange={handleVolume}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              opacity: 0,
+              cursor: 'pointer',
+            }}
+          />
+        </div>
+        <span style={{ fontSize: 11, color: '#5a5a4a', minWidth: 28 }}>
+          {Math.round(volume * 100)}%
+        </span>
       </div>
-      <div className="">
-        <div>
-          <div className="bg-dark text-center">
-            <button
-              className="btn btn-primary text-light mt-2"
-              onClick={() => setToggle(!toggle)}
-            >
-              {toggle ? 'Click to Hide' : 'Click to Show Effective Date'}
-            </button>
-            {toggle && (
-              <div className=" bg-dark text-light text-center  p-1">
-                <p>19/02/2026 English</p>
-                <p>06/11/1432 Bangla</p>
-                <p>01/09/1447 Arabic</p>
-                <p>Thursday</p>
-              </div>
-            )}
+    </div>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+const Home: React.FC = () => {
+  const [search, setSearch] = useState<string>('');
+  const [showDate, setShowDate] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<Section>('all');
+  const [manualAyat, setManualAyat] = useState<number | null>(null);
+  const [audioActiveId, setAudioActiveId] = useState<number | null>(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
+  const [quoteIdx, setQuoteIdx] = useState<number>(0);
+  const [copied, setCopied] = useState<number | null>(null);
+  const [visibleAyats, setVisibleAyats] = useState<Record<number, boolean>>({});
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const ayatRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Auto-rotate quotes
+  useEffect(() => {
+    const t = setInterval(
+      () => setQuoteIdx((i) => (i + 1) % quotes.length),
+      5000,
+    );
+    return () => clearInterval(t);
+  }, []);
+
+  // Scroll-reveal observer
+  useEffect(() => {
+    observerRef.current?.disconnect();
+    observerRef.current = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const id = Number((e.target as HTMLElement).dataset.id);
+            setVisibleAyats((prev) => ({ ...prev, [id]: true }));
+          }
+        }),
+      { threshold: 0.05 },
+    );
+    document
+      .querySelectorAll<HTMLElement>('[data-id]')
+      .forEach((c) => observerRef.current!.observe(c));
+    return () => observerRef.current?.disconnect();
+  }, [search, activeSection]);
+
+  // Track audio play/pause from outside
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    const onPlay = () => setIsAudioPlaying(true);
+    const onPause = () => setIsAudioPlaying(false);
+    const onEnded = () => {
+      setIsAudioPlaying(false);
+      setAudioActiveId(null);
+    };
+    a.addEventListener('play', onPlay);
+    a.addEventListener('pause', onPause);
+    a.addEventListener('ended', onEnded);
+    return () => {
+      a.removeEventListener('play', onPlay);
+      a.removeEventListener('pause', onPause);
+      a.removeEventListener('ended', onEnded);
+    };
+  }, []);
+
+  // Time → active ayat + auto-scroll
+  const handleTimeUpdate = useCallback((time: number) => {
+    const newId = getActiveIdFromTime(time);
+    setAudioActiveId((prev) => {
+      if (prev === newId) return prev;
+      ayatRefs.current[newId]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      return newId;
+    });
+  }, []);
+
+  // Click on ayat card → seek audio + start playing
+  const handleAyatClick = (item: Ayat): void => {
+    // toggle manual highlight if audio is not playing
+    if (!isAudioPlaying) {
+      setManualAyat((prev) => (prev === item.id ? null : item.id));
+    }
+    // Always seek audio to that ayat's time
+    const a = audioRef.current;
+    if (a) {
+      a.currentTime = item.startTime;
+      handleTimeUpdate(item.startTime);
+      if (a.paused) a.play();
+    }
+  };
+
+  // Active id: audio-driven when playing, manual otherwise
+  const activeId = isAudioPlaying ? audioActiveId : manualAyat;
+
+  const filtered: Ayat[] = data.filter((item) => {
+    const n = parseInt(item.ayatNo, 10);
+    const matchSearch =
+      search === '' ||
+      item.ayatNo.includes(search) ||
+      item.bangla.includes(search) ||
+      item.arabic.includes(search);
+    const matchSection =
+      activeSection === 'all' ||
+      (activeSection === 'jahannam' && n <= 50) ||
+      (activeSection === 'jannat' && n >= 51);
+    return matchSearch && matchSection;
+  });
+
+  const handleCopy = (text: string, id: number): void => {
+    navigator.clipboard.writeText(text).catch(console.error);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const now = new Date();
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          'linear-gradient(135deg, #0a0a0f 0%, #0d1117 40%, #0a0f0a 100%)',
+        fontFamily: "'Georgia', serif",
+        color: '#e8dcc8',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <style>{`
+        @keyframes fadeIn  { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pulse   { 0%,100%{ box-shadow:0 0 0 0 rgba(212,175,55,0.4); } 50%{ box-shadow:0 0 0 10px rgba(212,175,55,0); } }
+        @keyframes glow    { 0%,100%{ opacity:0.6; } 50%{ opacity:1; } }
+        @keyframes barUp   { 0%,100%{ transform:scaleY(0.4); } 50%{ transform:scaleY(1); } }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:#0a0a0f; }
+        ::-webkit-scrollbar-thumb { background:#3a2a0a; border-radius:4px; }
+        input::placeholder { color:#4a4a3a; }
+        button:hover { filter:brightness(1.15); transform:translateY(-1px); }
+      `}</style>
+
+      {/* Background */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 0,
+          backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(184,134,11,0.06) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(0,100,50,0.06) 0%, transparent 50%),
+          repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(184,134,11,0.015) 40px, rgba(184,134,11,0.015) 41px)
+        `,
+        }}
+      />
+
+      <div
+        style={{
+          maxWidth: 860,
+          margin: '0 auto',
+          padding: '0 16px',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        {/* ── HEADER ── */}
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '48px 24px 32px',
+            borderBottom: '1px solid rgba(184,134,11,0.2)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: 36,
+              color: '#d4af37',
+              marginBottom: 8,
+              fontFamily: "'Traditional Arabic','Scheherazade New',serif",
+              letterSpacing: 2,
+              textShadow: '0 0 30px rgba(212,175,55,0.4)',
+            }}
+          >
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
           </div>
+          <div
+            style={{
+              fontSize: 13,
+              letterSpacing: 6,
+              color: '#8a7a5a',
+              textTransform: 'uppercase',
+              marginBottom: 4,
+            }}
+          >
+            Surah
+          </div>
+          <div
+            style={{
+              fontSize: 28,
+              fontWeight: 'bold',
+              color: '#f0e0a0',
+              marginBottom: 4,
+            }}
+          >
+            الدُّخَان — Ad-Dukhan
+          </div>
+          <div style={{ fontSize: 13, color: '#7a8a7a', letterSpacing: 3 }}>
+            আয়াত ৪০ – ৫৯
+          </div>
+        </div>
+
+        {/* ── AUDIO PLAYER ── */}
+        <AudioPlayer
+          src={myAudio}
+          audioRef={audioRef}
+          onTimeUpdate={handleTimeUpdate}
+        />
+
+        {/* Now-playing banner */}
+        {isAudioPlaying && audioActiveId && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              background: 'rgba(212,175,55,0.08)',
+              border: '1px solid rgba(212,175,55,0.2)',
+              borderRadius: 8,
+              padding: '8px 16px',
+              marginBottom: 12,
+              animation: 'fadeIn 0.3s ease',
+            }}
+          >
+            {/* Animated sound bars */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                height: 18,
+              }}
+            >
+              {[0.5, 1, 0.7, 0.9, 0.4, 1, 0.6].map((h, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: 3,
+                    borderRadius: 2,
+                    background: '#d4af37',
+                    height: `${h * 18}px`,
+                    animation: `barUp ${0.5 + i * 0.07}s ease-in-out infinite`,
+                    animationDelay: `${i * 0.05}s`,
+                  }}
+                />
+              ))}
+            </div>
+            <span style={{ fontSize: 13, color: '#d4af37', letterSpacing: 1 }}>
+              এখন পড়া হচ্ছে — আয়াত{' '}
+              {data.find((d) => d.id === audioActiveId)?.ayatNo}
+            </span>
+            <span
+              style={{ fontSize: 11, color: '#6a6a5a', marginLeft: 'auto' }}
+            >
+              যেকোনো আয়াতে ক্লিক করলে সেখান থেকে শুরু হবে
+            </span>
+          </div>
+        )}
+
+        {/* ── ROTATING QUOTE ── */}
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(184,134,11,0.08), rgba(0,80,40,0.08))',
+            border: '1px solid rgba(184,134,11,0.15)',
+            borderRadius: 12,
+            padding: '24px 32px',
+            margin: '16px 0',
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 12,
+              left: 20,
+              fontSize: 60,
+              color: 'rgba(212,175,55,0.08)',
+              userSelect: 'none',
+              lineHeight: 1,
+            }}
+          >
+            "
+          </div>
+          <div
+            style={{
+              fontSize: 17,
+              color: '#e8d8a0',
+              lineHeight: 1.8,
+              marginBottom: 8,
+            }}
+          >
+            {quotes[quoteIdx].text}
+          </div>
+          <div style={{ fontSize: 12, color: '#8a7a5a', letterSpacing: 2 }}>
+            {quotes[quoteIdx].ref}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 6,
+              marginTop: 12,
+            }}
+          >
+            {quotes.map((_, i) => (
+              <div
+                key={i}
+                onClick={() => setQuoteIdx(i)}
+                style={{
+                  width: i === quoteIdx ? 20 : 6,
+                  height: 6,
+                  borderRadius: 3,
+                  background:
+                    i === quoteIdx ? '#d4af37' : 'rgba(212,175,55,0.2)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ── NAV FILTER ── */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            justifyContent: 'center',
+            padding: '16px 0',
+            flexWrap: 'wrap',
+          }}
+        >
+          {(
+            [
+              { key: 'all', label: '🌟 সকল আয়াত', color: '#d4af37' },
+              {
+                key: 'jahannam',
+                label: '🔥 জাহান্নাম (৪০–৫০)',
+                color: '#e05020',
+              },
+              { key: 'jannat', label: '🌿 জান্নাত (৫১–৫৯)', color: '#20a060' },
+            ] as { key: Section; label: string; color: string }[]
+          ).map(({ key, label, color }) => (
+            <button
+              key={key}
+              style={navBtnStyle(activeSection === key, color)}
+              onClick={() => setActiveSection(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* ── SEARCH ── */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(184,134,11,0.2)',
+            borderRadius: 8,
+            padding: '10px 16px',
+            margin: '4px 0 8px',
+            gap: 10,
+          }}
+        >
+          <span style={{ color: '#6a6a5a', fontSize: 16 }}>🔍</span>
+          <input
+            style={{
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: '#e8dcc8',
+              fontSize: 15,
+              flex: 1,
+              fontFamily: 'inherit',
+            }}
+            type="text"
+            value={search}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
+            placeholder="আয়াত নম্বর বা বাংলা শব্দ দিয়ে খুঁজুন..."
+          />
+          {search && (
+            <button
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#6a6a5a',
+                cursor: 'pointer',
+                fontSize: 16,
+              }}
+              onClick={() => setSearch('')}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        <div
+          style={{
+            fontSize: 12,
+            color: '#6a7a6a',
+            textAlign: 'right',
+            marginBottom: 12,
+            letterSpacing: 1,
+          }}
+        >
+          {filtered.length} টি আয়াত পাওয়া গেছে
+        </div>
+
+        {/* ── AYAT LIST ── */}
+        {filtered.map((item) => {
+          const n = parseInt(item.ayatNo, 10);
+          const isJahannam = n <= 50;
+          const isActive = activeId === item.id;
+          const isVisible = visibleAyats[item.id] ?? false;
+
+          const accentColor = isJahannam ? '#ff5533' : '#33cc77';
+          const borderColor = isJahannam
+            ? 'rgba(220,80,40,0.55)'
+            : 'rgba(40,180,80,0.55)';
+          const bgActive = isJahannam
+            ? 'linear-gradient(135deg, rgba(220,60,20,0.16), rgba(100,20,5,0.10))'
+            : 'linear-gradient(135deg, rgba(20,160,70,0.16), rgba(5,80,30,0.10))';
+
+          return (
+            <div
+              key={item.id}
+              data-id={item.id}
+              ref={(el) => {
+                ayatRefs.current[item.id] = el;
+              }}
+              onClick={() => handleAyatClick(item)}
+              style={{
+                background: isActive ? bgActive : 'rgba(255,255,255,0.02)',
+                border: `1px solid ${isActive ? borderColor : 'rgba(255,255,255,0.06)'}`,
+                borderRadius: 12,
+                padding: '20px 24px',
+                marginBottom: 12,
+                cursor: 'pointer',
+                transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                position: 'relative',
+                overflow: 'hidden',
+                animation:
+                  isActive && isAudioPlaying
+                    ? 'pulse 2s ease-in-out infinite'
+                    : 'none',
+              }}
+            >
+              {/* Color strip bg */}
+              <div
+                style={{
+                  background: isJahannam
+                    ? 'linear-gradient(90deg, rgba(180,30,10,0.18), transparent)'
+                    : 'linear-gradient(90deg, rgba(0,120,60,0.18), transparent)',
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: 12,
+                  pointerEvents: 'none',
+                }}
+              />
+
+              {/* Left accent bar when active */}
+              {isActive && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 4,
+                    borderRadius: '12px 0 0 12px',
+                    background: isJahannam
+                      ? 'linear-gradient(180deg, #ff4422, #cc2200)'
+                      : 'linear-gradient(180deg, #22cc66, #009933)',
+                    animation: 'glow 1s ease-in-out infinite alternate',
+                  }}
+                />
+              )}
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 14,
+                  position: 'relative',
+                }}
+              >
+                {/* Ayat badge */}
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    flexShrink: 0,
+                    border: `1px solid ${isActive ? borderColor : 'rgba(212,175,55,0.3)'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 13,
+                    fontWeight: 'bold',
+                    color: isActive ? accentColor : '#d4af37',
+                    background: isActive ? `${accentColor}18` : 'transparent',
+                    boxShadow: isActive ? `0 0 14px ${accentColor}40` : 'none',
+                    transition: 'all 0.3s',
+                  }}
+                >
+                  {item.ayatNo}
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  {/* Arabic */}
+                  <div
+                    style={{
+                      fontSize: 22,
+                      lineHeight: 2,
+                      textAlign: 'right',
+                      direction: 'rtl',
+                      color: isActive ? '#fff8e0' : '#f0e8c0',
+                      fontFamily:
+                        "'Traditional Arabic','Scheherazade New',serif",
+                      marginBottom: 8,
+                      transition: 'color 0.3s',
+                    }}
+                  >
+                    {item.arabic}
+                  </div>
+
+                  {/* Bangla */}
+                  <div
+                    style={{
+                      fontSize: 15,
+                      lineHeight: 1.9,
+                      color: isActive ? '#d0c8a0' : '#b0a888',
+                      transition: 'color 0.3s',
+                    }}
+                  >
+                    {item.bangla}
+                  </div>
+
+                  {/* Playing indicator */}
+                  {isActive && isAudioPlaying && (
+                    <div
+                      style={{
+                        marginTop: 6,
+                        fontSize: 11,
+                        color: accentColor,
+                        letterSpacing: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        animation: 'glow 1s ease-in-out infinite alternate',
+                      }}
+                    >
+                      ● এখন তিলাওয়াত হচ্ছে
+                    </div>
+                  )}
+
+                  {/* Manual expand — copy + tag */}
+                  {isActive && !isAudioPlaying && (
+                    <div
+                      style={{
+                        marginTop: 12,
+                        paddingTop: 12,
+                        borderTop: '1px solid rgba(255,255,255,0.06)',
+                        display: 'flex',
+                        gap: 8,
+                        justifyContent: 'flex-end',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <button
+                        style={actionBtnStyle('#d4af37')}
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          handleCopy(`${item.arabic}\n${item.bangla}`, item.id);
+                        }}
+                      >
+                        {copied === item.id ? '✓ কপি হয়েছে' : 'কপি করুন'}
+                      </button>
+                      <div
+                        style={{
+                          padding: '5px 14px',
+                          borderRadius: 20,
+                          fontSize: 12,
+                          letterSpacing: 1,
+                          background: isJahannam
+                            ? 'rgba(200,50,10,0.15)'
+                            : 'rgba(20,150,60,0.15)',
+                          border: isJahannam
+                            ? '1px solid #c0301044'
+                            : '1px solid #20a06044',
+                          color: isJahannam ? '#e06040' : '#40c080',
+                        }}
+                      >
+                        {isJahannam
+                          ? '🔥 জাহান্নামের আয়াত'
+                          : '🌿 জান্নাতের আয়াত'}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Empty state */}
+        {filtered.length === 0 && (
+          <div
+            style={{ textAlign: 'center', padding: '48px 0', color: '#4a4a3a' }}
+          >
+            <div style={{ fontSize: 32, marginBottom: 12 }}>☽</div>
+            <div>কোনো আয়াত পাওয়া যায়নি</div>
+          </div>
+        )}
+
+        {/* ── DATE SECTION ── */}
+        <div style={{ textAlign: 'center', padding: '24px 0 8px' }}>
+          <button
+            style={{
+              padding: '10px 28px',
+              borderRadius: 24,
+              border: '1px solid rgba(212,175,55,0.3)',
+              background: showDate ? 'rgba(212,175,55,0.12)' : 'transparent',
+              color: '#d4af37',
+              cursor: 'pointer',
+              fontSize: 14,
+              letterSpacing: 1,
+              fontFamily: 'inherit',
+              transition: 'all 0.3s',
+            }}
+            onClick={() => setShowDate(!showDate)}
+          >
+            {showDate ? '📅 তারিখ লুকান' : '📅 আজকের তারিখ দেখুন'}
+          </button>
+
+          {showDate && (
+            <div
+              style={{
+                background: 'rgba(0,80,40,0.15)',
+                border: '1px solid rgba(0,150,60,0.2)',
+                borderRadius: 10,
+                padding: '16px 24px',
+                textAlign: 'center',
+                marginTop: 8,
+                animation: 'fadeIn 0.4s ease',
+              }}
+            >
+              <div
+                style={{
+                  color: '#d4af37',
+                  fontSize: 13,
+                  letterSpacing: 3,
+                  marginBottom: 12,
+                  textTransform: 'uppercase',
+                }}
+              >
+                আজকের তারিখ
+              </div>
+              {(
+                [
+                  {
+                    label: 'English',
+                    value: now.toLocaleDateString('en-GB'),
+                    icon: '🌍',
+                  },
+                  {
+                    label: 'বাংলা',
+                    value: now.toLocaleDateString('bn-BD'),
+                    icon: '🇧🇩',
+                  },
+                  { label: 'দিন', value: DAYS[now.getDay()], icon: '📆' },
+                ] as { label: string; value: string; icon: string }[]
+              ).map(({ label, value, icon }) => (
+                <div
+                  key={label}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '6px 0',
+                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                    fontSize: 14,
+                  }}
+                >
+                  <span style={{ color: '#8a8a6a' }}>
+                    {icon} {label}
+                  </span>
+                  <span style={{ color: '#e8d8a0', fontWeight: 'bold' }}>
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── FOOTER ── */}
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '32px 16px',
+            marginTop: 24,
+            borderTop: '1px solid rgba(184,134,11,0.1)',
+            fontSize: 12,
+            color: '#4a4a3a',
+            letterSpacing: 2,
+          }}
+        >
+          <div style={{ color: '#d4af37', fontSize: 20, opacity: 0.4 }}>
+            ❖ ✦ ❖
+          </div>
+          <div style={{ marginTop: 8 }}>SURA AD-DUKHAN · AYAT 40–59</div>
+          <div style={{ marginTop: 4, color: '#3a3a2a' }}>سورة الدخان</div>
         </div>
       </div>
     </div>
