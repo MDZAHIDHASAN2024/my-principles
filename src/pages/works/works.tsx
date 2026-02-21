@@ -10,7 +10,6 @@ interface WorkItem {
   endMinutes: number;
 }
 
-// "4:00 AM" → minutes from midnight
 const parseTime = (t: string): number => {
   const [time, meridiem] = t.split(' ');
   const parts = time.split(':').map(Number);
@@ -139,7 +138,7 @@ const getActiveIndex = (nowMins: number) =>
   workPlans.findIndex((w) => {
     if (w.endMinutes > w.startMinutes)
       return nowMins >= w.startMinutes && nowMins < w.endMinutes;
-    return nowMins >= w.startMinutes || nowMins < w.endMinutes; // overnight
+    return nowMins >= w.startMinutes || nowMins < w.endMinutes;
   });
 
 const getBlockProgress = (nowMins: number, w: WorkItem) => {
@@ -150,23 +149,21 @@ const getBlockProgress = (nowMins: number, w: WorkItem) => {
   return Math.min(Math.max(elapsed / total, 0), 1);
 };
 
-// Returns 0-1 progress for any row based on current time
 const getRowProgress = (
   nowMins: number,
   w: WorkItem,
   idx: number,
   activeIdx: number,
 ): number => {
-  if (idx < activeIdx) return 1; // past blocks = 100%
-  if (idx === activeIdx) return getBlockProgress(nowMins, w); // current = live %
-  return 0; // future blocks = 0%
+  if (idx < activeIdx) return 1;
+  if (idx === activeIdx) return getBlockProgress(nowMins, w);
+  return 0;
 };
 
 const totalHours = workPlans.reduce((a, w) => a + w.hours, 0);
 
 export default function Works() {
   const [visibleRows, setVisibleRows] = useState<number[]>([]);
-  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [nowMins, setNowMins] = useState(getNowMinutes);
   const [timeStr, setTimeStr] = useState('');
 
@@ -202,147 +199,308 @@ export default function Works() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .wr { min-height:100vh; background:#050810;
+        .wr {
+          min-height: 100vh;
+          width: 100%;
+          background: #050810;
           background-image:
             radial-gradient(ellipse 60% 40% at 20% 10%, rgba(96,165,250,.07) 0%, transparent 60%),
             radial-gradient(ellipse 50% 50% at 80% 80%, rgba(192,132,252,.06) 0%, transparent 60%);
-          font-family:'Syne',sans-serif; padding:2rem 1rem 3rem; color:#e2e8f0; }
+          font-family: 'Syne', sans-serif;
+          padding: 2rem 2.5rem 3rem;
+          color: #e2e8f0;
+        }
 
-        /* header */
-        .hdr { display:flex; align-items:flex-start; justify-content:space-between;
-          margin-bottom:2rem; gap:1rem; flex-wrap:wrap; }
-        .ttl { font-size:clamp(2rem,5vw,3.2rem); font-weight:800; letter-spacing:-.03em; line-height:1;
-          background:linear-gradient(135deg,#e2e8f0 0%,#60a5fa 50%,#c084fc 100%);
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .sub { font-family:'Space Mono',monospace; font-size:.72rem; color:#475569;
-          letter-spacing:.15em; text-transform:uppercase; margin-top:.4rem; }
-        .clk { font-family:'Space Mono',monospace; font-size:1rem; color:#60a5fa;
-          background:rgba(96,165,250,.07); border:1px solid rgba(96,165,250,.2);
-          border-radius:8px; padding:.5rem 1rem; letter-spacing:.06em; white-space:nowrap;
-          display:flex; align-items:center; gap:.5rem; }
-        .clk-dot { width:7px; height:7px; border-radius:50%; background:#60a5fa;
-          animation:pdot 1s ease-in-out infinite; }
-        @keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.65)} }
+        /* ── Header ── */
+        .hdr {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          margin-bottom: 1.8rem;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+        .ttl {
+          font-size: clamp(2.4rem, 5vw, 4rem);
+          font-weight: 800;
+          letter-spacing: -.03em;
+          line-height: 1;
+          background: linear-gradient(135deg, #e2e8f0 0%, #60a5fa 50%, #c084fc 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .sub {
+          font-family: 'Space Mono', monospace;
+          font-size: .8rem;
+          color: #475569;
+          letter-spacing: .15em;
+          text-transform: uppercase;
+          margin-top: .35rem;
+        }
+        .clk {
+          font-family: 'Space Mono', monospace;
+          font-size: 1.05rem;
+          color: #60a5fa;
+          background: rgba(96,165,250,.07);
+          border: 1px solid rgba(96,165,250,.25);
+          border-radius: 10px;
+          padding: .55rem 1.2rem;
+          letter-spacing: .06em;
+          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          gap: .5rem;
+        }
+        .clk-dot {
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: #60a5fa;
+          animation: pdot 1s ease-in-out infinite;
+        }
+        @keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.6)} }
 
-        /* now banner */
-        .now-banner { display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
-          background:rgba(15,20,35,.75); border:1px solid rgba(255,255,255,.06);
-          border-radius:12px; padding:.85rem 1.25rem; margin-bottom:1.2rem;
-          backdrop-filter:blur(12px); }
-        .now-tag { font-family:'Space Mono',monospace; font-size:.6rem; font-weight:700;
-          letter-spacing:.18em; text-transform:uppercase; padding:.22rem .6rem;
-          border-radius:20px; border:1px solid; white-space:nowrap; }
-        .now-task { font-weight:600; font-size:.88rem; color:#cbd5e1; flex:1; min-width:100px; }
-        .now-prow { flex:1; min-width:130px; display:flex; align-items:center; gap:.55rem; }
-        .now-track { flex:1; height:3px; background:rgba(255,255,255,.06); border-radius:2px; overflow:hidden; }
-        .now-fill { height:100%; border-radius:2px; transition:width 1s linear; }
-        .now-pct { font-family:'Space Mono',monospace; font-size:.63rem; color:#475569; white-space:nowrap; }
+        /* ── Now banner ── */
+        .now-banner {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          flex-wrap: wrap;
+          background: rgba(15,20,35,.8);
+          border: 1px solid rgba(255,255,255,.07);
+          border-radius: 12px;
+          padding: .9rem 1.4rem;
+          margin-bottom: 1.4rem;
+          backdrop-filter: blur(12px);
+        }
+        .now-tag {
+          font-family: 'Space Mono', monospace;
+          font-size: .7rem;
+          font-weight: 700;
+          letter-spacing: .2em;
+          text-transform: uppercase;
+          padding: .28rem .75rem;
+          border-radius: 20px;
+          border: 1px solid;
+          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          gap: .4rem;
+        }
+        .now-tag-dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          animation: pdot 1s ease-in-out infinite;
+        }
+        .now-task { font-weight: 700; font-size: 1.05rem; color: #e2e8f0; flex: 1; min-width: 80px; }
+        .now-prow { display: flex; align-items: center; gap: .6rem; min-width: 180px; flex: 1; }
+        .now-track { flex: 1; height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+        .now-fill { height: 100%; border-radius: 2px; transition: width 1s linear; }
+        .now-pct { font-family: 'Space Mono', monospace; font-size: .72rem; color: #64748b; white-space: nowrap; }
 
-        /* panel */
-        .panel { background:rgba(15,20,35,.8); border:1px solid rgba(255,255,255,.06);
-          border-radius:16px; overflow:hidden; backdrop-filter:blur(12px);
-          box-shadow:0 0 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
-          margin-bottom:1.5rem; }
-        table { width:100%; border-collapse:collapse; }
-        thead tr { background:rgba(255,255,255,.02); border-bottom:1px solid rgba(255,255,255,.06); }
-        th { font-family:'Space Mono',monospace; font-size:.63rem; letter-spacing:.2em;
-          text-transform:uppercase; color:#475569; padding:1rem 1.25rem;
-          text-align:left; font-weight:400; }
-        th:last-child { text-align:center; }
+        /* ── Panel / table ── */
+        .panel {
+          background: rgba(13,18,30,.85);
+          border: 1px solid rgba(255,255,255,.06);
+          border-radius: 16px;
+          overflow: hidden;
+          backdrop-filter: blur(14px);
+          box-shadow: 0 0 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);
+          margin-bottom: 1.8rem;
+          width: 100%;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: rgba(255,255,255,.025); border-bottom: 1px solid rgba(255,255,255,.06); }
+        th {
+          font-family: 'Space Mono', monospace;
+          font-size: .72rem;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+          color: #475569;
+          padding: .9rem 1.4rem;
+          text-align: left;
+          font-weight: 400;
+        }
+        th:last-child { text-align: center; }
 
-        /* rows */
-        .row { border-bottom:1px solid rgba(255,255,255,.03); cursor:default;
-          position:relative; opacity:0; transform:translateX(-12px);
-          transition:background .25s ease; }
-        .row.vis { animation:sli .4s ease forwards; }
+        /* ── Rows ── */
+        .row {
+          border-bottom: 1px solid rgba(255,255,255,.035);
+          position: relative;
+          opacity: 0;
+          transform: translateX(-14px);
+          transition: background .2s;
+        }
+        .row.vis { animation: sli .38s ease forwards; }
         @keyframes sli { to { opacity:1; transform:translateX(0); } }
-        .row:hover { background:rgba(255,255,255,.025); }
+        .row:last-child { border-bottom: none; }
+        .row:hover { background: rgba(255,255,255,.022); }
 
+        /* active row */
         .row.active {
           background: var(--abg) !important;
           border-left: 3px solid var(--ac);
-          box-shadow: inset 4px 0 24px var(--ag), inset 0 0 40px rgba(0,0,0,.1);
+          box-shadow: inset 5px 0 28px var(--ag);
         }
         .row.active .tc { color: var(--ac) !important; }
 
-        td { padding:.85rem 1.25rem; vertical-align:middle; }
-        .tc { font-family:'Space Mono',monospace; font-size:.76rem; color:#64748b;
-          white-space:nowrap; width:88px; transition:color .3s; }
+        td { padding: .95rem 1.4rem; vertical-align: middle; }
 
-        .tsk { font-size:.88rem; font-weight:600; display:flex; align-items:center; gap:.7rem; }
-        .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-        .row.active .dot { animation:pring 1.8s ease-in-out infinite; }
-        @keyframes pring {
-          0%   { box-shadow:0 0 0 0 var(--ag); }
-          70%  { box-shadow:0 0 0 6px transparent; }
-          100% { box-shadow:0 0 0 0 transparent; }
+        /* time cells */
+        .tc {
+          font-family: 'Space Mono', monospace;
+          font-size: .82rem;
+          color: #475569;
+          white-space: nowrap;
+          width: 96px;
+          transition: color .25s;
         }
 
-        .nbadge { font-family:'Space Mono',monospace; font-size:.55rem; font-weight:700;
-          letter-spacing:.16em; padding:.18rem .52rem; border-radius:20px; border:1px solid;
-          text-transform:uppercase; flex-shrink:0;
-          animation:bpulse 2s ease-in-out infinite; }
-        @keyframes bpulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+        /* task cell */
+        .task-wrap { display: flex; align-items: center; gap: .8rem; flex-wrap: nowrap; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .row.active .dot { animation: pring 1.8s ease-in-out infinite; }
+        @keyframes pring {
+          0%   { box-shadow: 0 0 0 0 var(--ag); }
+          70%  { box-shadow: 0 0 0 7px transparent; }
+          100% { box-shadow: 0 0 0 0 transparent; }
+        }
+        .task-name {
+          font-size: .98rem;
+          font-weight: 700;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          transition: color .2s;
+        }
 
-        /* bottom progress strip — all rows */
-        .strip { position:absolute; bottom:0; left:0; height:2px;
-          transition:width 1s linear; border-radius:0 2px 0 0; pointer-events:none; }
+        /* badges */
+        .badge {
+          font-family: 'Space Mono', monospace;
+          font-size: .58rem;
+          font-weight: 700;
+          letter-spacing: .18em;
+          padding: .2rem .6rem;
+          border-radius: 20px;
+          border: 1px solid;
+          text-transform: uppercase;
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+        .badge-now { animation: bpulse 2s ease-in-out infinite; }
+        @keyframes bpulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        .badge-done { opacity: .7; }
 
-        /* per-row progress bar inside task cell */
-        .row-pbar-wrap { margin-top:.45rem; height:3px; background:rgba(255,255,255,.05);
-          border-radius:2px; overflow:hidden; width:100%; }
-        .row-pbar-fill { height:100%; border-radius:2px; transition:width 1s linear; }
-        .row-pbar-pct { font-family:'Space Mono',monospace; font-size:.52rem;
-          margin-top:.25rem; letter-spacing:.08em; opacity:.7; }
+        /* progress bar under task name */
+        .pbar-wrap {
+          margin-top: .4rem;
+          height: 3px;
+          background: rgba(255,255,255,.05);
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        .pbar-fill { height: 100%; border-radius: 2px; transition: width 1s linear; }
+        .pbar-pct {
+          font-family: 'Space Mono', monospace;
+          font-size: .58rem;
+          margin-top: .22rem;
+          letter-spacing: .08em;
+          opacity: .75;
+        }
 
-        .hcell { text-align:center; width:80px; }
-        .hbadge { font-family:'Space Mono',monospace; font-size:.75rem; font-weight:700;
-          padding:.3rem .7rem; border-radius:20px; letter-spacing:.05em;
-          display:inline-block; border:1px solid; transition:box-shadow .2s; }
-        .row:hover .hbadge, .row.active .hbadge { box-shadow:0 0 12px var(--bg); }
+        /* hrs badge */
+        .hcell { text-align: center; width: 80px; }
+        .hbadge {
+          font-family: 'Space Mono', monospace;
+          font-size: .85rem;
+          font-weight: 700;
+          padding: .35rem .85rem;
+          border-radius: 20px;
+          border: 1px solid;
+          display: inline-block;
+          letter-spacing: .04em;
+          transition: box-shadow .2s;
+        }
+        .row:hover .hbadge, .row.active .hbadge { box-shadow: 0 0 14px var(--bg,transparent); }
 
-        /* legend */
-        .legend { display:flex; flex-wrap:wrap; gap:1rem; padding:.9rem 1.25rem;
-          border-top:1px solid rgba(255,255,255,.04); background:rgba(255,255,255,.01); }
-        .leg-item { display:flex; align-items:center; gap:.4rem; font-size:.67rem;
-          font-family:'Space Mono',monospace; color:#475569;
-          text-transform:uppercase; letter-spacing:.1em; }
-        .leg-dot { width:6px; height:6px; border-radius:50%; }
+        /* active progress strip at bottom of row */
+        .strip {
+          position: absolute;
+          bottom: 0; left: 0;
+          height: 2px;
+          transition: width 1s linear;
+          border-radius: 0 2px 0 0;
+          pointer-events: none;
+        }
 
-        /* goals */
-        .gtitle { font-family:'Space Mono',monospace; font-size:.65rem; letter-spacing:.2em;
-          text-transform:uppercase; color:#334155; margin-bottom:.75rem; }
-        .ggrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
-          gap:1rem; margin-bottom:1.5rem; }
-        .gcard { background:rgba(15,20,35,.6); border:1px solid rgba(255,255,255,.06);
-          border-radius:12px; padding:1.1rem 1.25rem;
-          display:flex; align-items:center; gap:.75rem;
-          transition:border-color .2s,transform .2s; }
-        .gcard:hover { border-color:rgba(96,165,250,.3); transform:translateY(-2px); }
-        .gicon { font-size:1.4rem; line-height:1; }
-        .glabel { font-size:.85rem; font-weight:600; color:#cbd5e1; }
-        .gdetail { font-family:'Space Mono',monospace; font-size:.63rem;
-          color:#475569; margin-top:.15rem; letter-spacing:.05em; }
+        /* ── Legend ── */
+        .legend {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          padding: .85rem 1.4rem;
+          border-top: 1px solid rgba(255,255,255,.04);
+          background: rgba(255,255,255,.01);
+        }
+        .leg-item {
+          display: flex; align-items: center; gap: .4rem;
+          font-size: .68rem;
+          font-family: 'Space Mono', monospace;
+          color: #475569;
+          text-transform: uppercase;
+          letter-spacing: .1em;
+        }
+        .leg-dot { width: 7px; height: 7px; border-radius: 50%; }
 
-        /* footer */
-        .fbar { display:flex; align-items:center; justify-content:space-between;
-          flex-wrap:wrap; gap:1rem; }
-        .ftlabel { font-family:'Space Mono',monospace; font-size:.7rem; color:#475569;
-          letter-spacing:.15em; text-transform:uppercase; }
-        .ftval { font-size:2rem; font-weight:800;
-          background:linear-gradient(90deg,#60a5fa,#c084fc);
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-          background-clip:text; line-height:1; }
-        .pbar-wrap { flex:1; min-width:200px; height:4px;
-          background:rgba(255,255,255,.06); border-radius:2px; overflow:hidden; }
-        .pbar-fill { height:100%; border-radius:2px;
-          background:linear-gradient(90deg,#3b82f6,#a855f7);
-          width:0; animation:fb 1.5s .6s ease forwards; }
-        @keyframes fb { to { width:${Math.round((totalHours / 24) * 100)}%; } }
+        /* ── Extra goals ── */
+        .gtitle {
+          font-family: 'Space Mono', monospace;
+          font-size: .7rem;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+          color: #334155;
+          margin-bottom: .75rem;
+        }
+        .ggrid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.8rem;
+        }
+        .gcard {
+          background: rgba(13,18,30,.7);
+          border: 1px solid rgba(255,255,255,.06);
+          border-radius: 12px;
+          padding: 1.1rem 1.3rem;
+          display: flex; align-items: center; gap: .75rem;
+          transition: border-color .2s, transform .2s;
+        }
+        .gcard:hover { border-color: rgba(96,165,250,.3); transform: translateY(-2px); }
+        .gicon { font-size: 1.5rem; line-height: 1; }
+        .glabel { font-size: .95rem; font-weight: 700; color: #cbd5e1; }
+        .gdetail { font-family: 'Space Mono', monospace; font-size: .65rem; color: #475569; margin-top: .12rem; letter-spacing: .04em; }
 
-        @media(max-width:560px){ .tc{display:none} }
+        /* ── Footer ── */
+        .fbar {
+          display: flex; align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap; gap: 1rem;
+        }
+        .ftlabel { font-family: 'Space Mono', monospace; font-size: .75rem; color: #475569; letter-spacing: .15em; text-transform: uppercase; }
+        .ftval {
+          font-size: 2.6rem; font-weight: 800;
+          background: linear-gradient(90deg, #60a5fa, #c084fc);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+          line-height: 1;
+        }
+        .pbar-total-wrap { flex: 1; min-width: 200px; height: 5px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
+        .pbar-total-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg,#3b82f6,#a855f7); width: 0; animation: fb 1.5s .6s ease forwards; }
+        @keyframes fb { to { width: ${Math.round((totalHours / 24) * 100)}%; } }
+        .ftcount { font-family: 'Space Mono', monospace; font-size: .75rem; color: #334155; }
+
+        @media (max-width: 600px) { .tc { display: none; } .task-name { white-space: normal; } }
       `}</style>
 
       <div className="wr">
@@ -358,18 +516,22 @@ export default function Works() {
           </div>
         </div>
 
-        {/* ── Active task banner ── */}
+        {/* ── Now banner ── */}
         {activeWork && activeCfg && (
           <div className="now-banner">
             <span
               className="now-tag"
               style={{
                 color: activeCfg.color,
-                borderColor: activeCfg.color + '50',
+                borderColor: activeCfg.color + '55',
                 background: activeCfg.bg,
               }}
             >
-              ▶ NOW
+              <span
+                className="now-tag-dot"
+                style={{ background: activeCfg.color }}
+              />
+              NOW
             </span>
             <span className="now-task">{activeWork.task}</span>
             <div className="now-prow">
@@ -402,10 +564,9 @@ export default function Works() {
               {workPlans.map((w, i) => {
                 const cfg = categoryConfig[w.category];
                 const isActive = i === activeIdx;
-                const isHovered = hoveredRow === i;
-                const rowProgress = getRowProgress(nowMins, w, i, activeIdx);
                 const isDone = i < activeIdx;
                 const isFuture = i > activeIdx;
+                const rowProgress = getRowProgress(nowMins, w, i, activeIdx);
 
                 return (
                   <tr
@@ -427,13 +588,12 @@ export default function Works() {
                           : {}),
                       } as React.CSSProperties
                     }
-                    onMouseEnter={() => setHoveredRow(i)}
-                    onMouseLeave={() => setHoveredRow(null)}
                   >
                     <td className="tc">{w.start}</td>
                     <td className="tc">{w.end}</td>
                     <td>
-                      <div className="tsk">
+                      {/* Task row */}
+                      <div className="task-wrap">
                         <span
                           className="dot"
                           style={
@@ -446,21 +606,20 @@ export default function Works() {
                           }
                         />
                         <span
+                          className="task-name"
                           style={{
-                            color:
-                              isActive || isHovered
-                                ? cfg.color
-                                : isDone
-                                  ? cfg.color + 'aa'
-                                  : '#cbd5e1',
-                            transition: 'color .2s',
+                            color: isActive
+                              ? cfg.color
+                              : isDone
+                                ? cfg.color + 'bb'
+                                : '#cbd5e1',
                           }}
                         >
                           {w.task}
                         </span>
                         {isActive && (
                           <span
-                            className="nbadge"
+                            className="badge badge-now"
                             style={{
                               color: cfg.color,
                               borderColor: cfg.color + '55',
@@ -472,49 +631,47 @@ export default function Works() {
                         )}
                         {isDone && (
                           <span
+                            className="badge badge-done"
                             style={{
-                              fontFamily: "'Space Mono',monospace",
-                              fontSize: '.52rem',
-                              color: cfg.color + 'aa',
-                              letterSpacing: '.1em',
-                              flexShrink: 0,
+                              color: cfg.color + 'cc',
+                              borderColor: cfg.color + '33',
+                              background: cfg.bg,
                             }}
                           >
-                            ✓ DONE
+                            ✓ Done
                           </span>
                         )}
                       </div>
-                      {/* Per-row progress bar */}
-                      <div className="row-pbar-wrap">
-                        <div
-                          className="row-pbar-fill"
-                          style={{
-                            width: `${Math.round(rowProgress * 100)}%`,
-                            background: isFuture
-                              ? 'transparent'
-                              : isDone
-                                ? cfg.color + '55'
-                                : cfg.color,
-                            boxShadow: isActive
-                              ? `0 0 6px ${cfg.color}88`
-                              : 'none',
-                          }}
-                        />
-                      </div>
+
+                      {/* Progress bar */}
                       {!isFuture && (
-                        <div
-                          className="row-pbar-pct"
-                          style={{ color: cfg.color }}
-                        >
-                          {Math.round(rowProgress * 100)}%
-                          {isDone
-                            ? ' · complete'
-                            : isActive
-                              ? ' · in progress'
-                              : ''}
-                        </div>
+                        <>
+                          <div className="pbar-wrap">
+                            <div
+                              className="pbar-fill"
+                              style={{
+                                width: `${Math.round(rowProgress * 100)}%`,
+                                background: isDone
+                                  ? cfg.color + '66'
+                                  : cfg.color,
+                                boxShadow: isActive
+                                  ? `0 0 8px ${cfg.color}88`
+                                  : 'none',
+                              }}
+                            />
+                          </div>
+                          <div
+                            className="pbar-pct"
+                            style={{ color: cfg.color }}
+                          >
+                            {Math.round(rowProgress * 100)}% ·{' '}
+                            {isDone ? 'complete' : 'in progress'}
+                          </div>
+                        </>
                       )}
                     </td>
+
+                    {/* Hrs */}
                     <td className="hcell">
                       <span
                         className="hbadge"
@@ -522,7 +679,7 @@ export default function Works() {
                           {
                             color: cfg.color,
                             borderColor: cfg.color + '40',
-                            background: cfg.glow,
+                            background: cfg.bg,
                             ['--bg' as string]: cfg.glow,
                           } as React.CSSProperties
                         }
@@ -531,14 +688,14 @@ export default function Works() {
                       </span>
                     </td>
 
-                    {/* Time-progress strip at bottom of active row */}
+                    {/* Active row bottom strip */}
                     {isActive && (
                       <span
                         className="strip"
                         style={{
                           width: `${Math.round(rowProgress * 100)}%`,
                           background: cfg.color,
-                          opacity: 0.55,
+                          opacity: 0.5,
                         }}
                       />
                     )}
@@ -548,6 +705,7 @@ export default function Works() {
             </tbody>
           </table>
 
+          {/* Legend */}
           <div className="legend">
             {(Object.keys(categoryConfig) as WorkItem['category'][]).map(
               (k) => (
@@ -583,18 +741,10 @@ export default function Works() {
             <div className="ftlabel">Total Productive Hours</div>
             <div className="ftval">{totalHours}h</div>
           </div>
-          <div className="pbar-wrap">
-            <div className="pbar-fill" />
+          <div className="pbar-total-wrap">
+            <div className="pbar-total-fill" />
           </div>
-          <div
-            style={{
-              fontFamily: "'Space Mono',monospace",
-              fontSize: '.7rem',
-              color: '#334155',
-            }}
-          >
-            {totalHours}/24 hrs
-          </div>
+          <div className="ftcount">{totalHours}/24 hrs</div>
         </div>
       </div>
     </>

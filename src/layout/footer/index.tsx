@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { FaBalanceScale, FaGithub, FaLinkedin, FaHeart } from 'react-icons/fa';
+import { FaBalanceScale, FaGithub, FaHeart } from 'react-icons/fa';
 import './index.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -39,10 +39,9 @@ const SECTIONS: FooterSection[] = [
 
 const SOCIAL: { icon: React.ReactElement; href: string; label: string }[] = [
   { icon: <FaGithub />, href: 'https://github.com', label: 'GitHub' },
-  { icon: <FaLinkedin />, href: 'https://linkedin.com', label: 'LinkedIn' },
 ];
 
-const VERSION = 'v11.05';
+const VERSION = 'v12.00';
 const YEAR = new Date().getFullYear();
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -73,7 +72,7 @@ const Footer = (): React.ReactElement => {
         <div className="ft__brand-col">
           <div className="ft__logo">
             <FaBalanceScale className="ft__logo-icon" />
-            <span className="ft__logo-text">LifeOS</span>
+            <span className="ft__logo-text">MYLOS</span>
           </div>
           <p className="ft__tagline">
             Engineer your life with intention. Every system, every habit —
@@ -125,8 +124,8 @@ const Footer = (): React.ReactElement => {
           <span>© {YEAR} All Rights Reserved</span>
           <span className="ft__dot">·</span>
           <span className="ft__dev">
-            Crafted with <FaHeart className="ft__heart" /> by{' '}
-            <strong>Zahid</strong>
+            Designed and developed
+            <FaHeart className="ft__heart" /> by <strong>Zahid Hasan</strong>
           </span>
         </div>
       </div>

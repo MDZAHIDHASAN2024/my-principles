@@ -294,7 +294,6 @@ const AudioPlayer = ({ src, audioRef, onTimeUpdate }: AudioPlayerProps) => {
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
       />
-
       {/* Row 1: play + info + time */}
       <div
         style={{
@@ -349,7 +348,6 @@ const AudioPlayer = ({ src, audioRef, onTimeUpdate }: AudioPlayerProps) => {
           {fmtTime(currentTime)} / {fmtTime(duration)}
         </div>
       </div>
-
       {/* Progress bar */}
       <div style={{ position: 'relative', marginBottom: 10 }}>
         <div
@@ -390,7 +388,6 @@ const AudioPlayer = ({ src, audioRef, onTimeUpdate }: AudioPlayerProps) => {
           }}
         />
       </div>
-
       {/* Volume */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 14 }}>
@@ -424,6 +421,8 @@ const Home = () => {
   const [quoteIdx, setQuoteIdx] = useState(0);
   const [copied, setCopied] = useState<number | null>(null);
   const [visibleAyats, setVisibleAyats] = useState<Record<number, boolean>>({});
+  const [jahannamHover, setJahannamHover] = useState(false);
+  const [jannatHover, setJannatHover] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const ayatRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -571,6 +570,20 @@ const Home = () => {
         />
       </div>
 
+      {/* ── FLOATING SIDE BUTTONS ── */}
+      <style>{`
+        @keyframes flicker {
+          0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(255,80,40,0.8); }
+          50% { opacity: 0.85; text-shadow: 0 0 16px rgba(255,80,40,1); }
+        }
+        @keyframes glow {
+          0%, 100% { box-shadow: 0 0 12px rgba(40,200,100,0.3); }
+          50% { box-shadow: 0 0 24px rgba(40,200,100,0.55); }
+        }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.1); } 50% { box-shadow: 0 0 20px 4px rgba(212,175,55,0.12); } }
+        @keyframes soundBar { from { opacity: 0.4; } to { opacity: 1; } }
+      `}</style>
+
       <div
         style={{
           position: 'relative',
@@ -594,14 +607,76 @@ const Home = () => {
           </div>
           <div
             style={{
-              fontSize: 11,
-              letterSpacing: 6,
-              color: '#555',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
               marginBottom: 8,
-              textTransform: 'uppercase',
             }}
           >
-            Surah
+            {/* বাম — জাহান্নাম */}
+            <button
+              onClick={() => (window.location.href = '/jahannam')}
+              onMouseEnter={() => setJahannamHover(true)}
+              onMouseLeave={() => setJahannamHover(false)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 16,
+                border: '1px solid rgba(220,80,40,0.5)',
+                background: jahannamHover
+                  ? 'rgba(220,60,20,0.28)'
+                  : 'rgba(180,40,10,0.12)',
+                color: jahannamHover ? '#ff9977' : '#ff6644',
+                cursor: 'pointer',
+                fontSize: 13,
+                letterSpacing: 0.5,
+                fontFamily: 'inherit',
+                fontWeight: 600,
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap',
+                animation: 'glow 3s ease-in-out infinite',
+              }}
+            >
+              🔥 জাহান্নাম দেখতে ক্লিক করো
+            </button>
+
+            {/* মাঝে — Surah */}
+            <div
+              style={{
+                fontSize: 11,
+                letterSpacing: 6,
+                color: '#555',
+                textTransform: 'uppercase',
+              }}
+            >
+              Surah
+            </div>
+
+            {/* ডান — জান্নাত */}
+            <button
+              onClick={() => (window.location.href = '/jannat')}
+              onMouseEnter={() => setJannatHover(true)}
+              onMouseLeave={() => setJannatHover(false)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 16,
+                border: '1px solid rgba(40,180,80,0.5)',
+                background: jannatHover
+                  ? 'rgba(20,160,70,0.28)'
+                  : 'rgba(10,130,55,0.12)',
+                color: jannatHover ? '#77ffbb' : '#44ee88',
+                cursor: 'pointer',
+                fontSize: 13,
+                letterSpacing: 0.5,
+                fontFamily: 'inherit',
+                fontWeight: 600,
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap',
+                animation: 'glow 3s ease-in-out infinite',
+              }}
+            >
+              🌿 জান্নাত দেখতে ক্লিক করো
+            </button>
           </div>
           <h1
             style={{
@@ -629,7 +704,6 @@ const Home = () => {
         </div>
 
         {/* ── AUDIO PLAYER ── */}
-
         <AudioPlayer
           src={myAudio}
           audioRef={audioRef}
@@ -838,11 +912,6 @@ const Home = () => {
         </div>
 
         {/* ── AYAT LIST ── */}
-        <style>{`
-          @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.1); } 50% { box-shadow: 0 0 20px 4px rgba(212,175,55,0.12); } }
-          @keyframes soundBar { from { opacity: 0.4; } to { opacity: 1; } }
-        `}</style>
-
         {filtered.map((item) => {
           const n = parseInt(item.ayatNo, 10);
           const isJahannam = n <= 50;
@@ -1067,21 +1136,18 @@ const Home = () => {
               </div>
               {(
                 [
+                  { label: 'English', value: '23/02/2026', icon: '🌍' },
                   {
-                    label: 'English',
-                    value: '19/02/2026',
-                    icon: '🌍',
-                  },
-                  {
-                    label: 'Bangla',
-                    value: '19/02/2026',
+                    label: 'Bangla (Bangladesh)',
+                    value: '10/11/1432',
                     icon: '🇧🇩',
                   },
                   {
-                    label: 'Arabic',
-                    value: '1/02/2026',
-                    icon: 'UAE',
+                    label: 'Hijri (Saudi Arabia)',
+                    value: '05/09/1447',
+                    icon: '🇸🇦',
                   },
+                  { label: 'Monday' },
                 ] as { label: string; value: string; icon: string }[]
               ).map(({ label, value, icon }) => (
                 <div

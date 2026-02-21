@@ -88,7 +88,7 @@ const Index = (): React.ReactElement => {
           {/* ── BRAND ── */}
           <Link to="/" className="nx-brand">
             <FaBalanceScale className="nx-brand__icon" />
-            <span className="nx-brand__text">LifeOS</span>
+            <span className="nx-brand__text">MYLOS</span>
           </Link>
 
           {/* ── DESKTOP LINKS ── */}
