@@ -1,43 +1,160 @@
+import { useEffect, useRef, useState } from 'react';
 import PageTitle from '../pageTitle/pageTitle';
 import './index.css';
-const principles = [
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Principle {
+  id: number;
+  rule: string;
+  arabic?: string;
+  icon: string;
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const principles: Principle[] = [
   {
     id: 1,
-    rule: 'হালাল রুজি উপার্জন ও ভক্ষণ করো !',
+    icon: '☪',
+    arabic: 'الرِّزْقُ الْحَلَالُ',
+    rule: 'হালাল রুজি উপার্জন ও ভক্ষণ করো',
   },
   {
     id: 2,
-    rule: 'পাঁচ ওয়াক্ত সালাত আদায় করো !',
+    icon: '🕌',
+    arabic: 'إِقَامَةُ الصَّلَاةِ',
+    rule: 'পাঁচ ওয়াক্ত সালাত আদায় করো',
   },
   {
     id: 3,
-    rule: 'রামাজান মাসে ছিয়াম পালন করো !',
+    icon: '🌙',
+    arabic: 'صِيَامُ رَمَضَانَ',
+    rule: 'রামাজান মাসে ছিয়াম পালন করো',
   },
   {
     id: 4,
-    rule: 'মাসিক বেতন এর ২.৫% দান করো !',
+    icon: '💛',
+    arabic: 'إِيتَاءُ الزَّكَاةِ',
+    rule: 'মাসিক বেতনের ২.৫% দান করো',
   },
 ];
-const Principles = () => {
+
+// ─── Card Component ───────────────────────────────────────────────────────────
+
+interface CardProps {
+  principle: Principle;
+  index: number;
+}
+
+const PrincipleCard = ({ principle, index }: CardProps): React.ReactElement => {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [hovered, setHovered] = useState<boolean>(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect((): (() => void) => {
+    const obs = new IntersectionObserver(
+      ([entry]: IntersectionObserverEntry[]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.15 },
+    );
+    if (ref.current) obs.observe(ref.current);
+    return (): void => obs.disconnect();
+  }, []);
+
   return (
-    <div className="container bg-secondary my-rule p-2 ">
-      <PageTitle title="Main Principle's" />
-      <div className="bg-warning p-2 text-light d-block text-center ">
-        <h2 className="fw-bold">Principle of 4</h2>
+    <div
+      ref={ref}
+      className={`pr-card${visible ? ' pr-card--visible' : ''}${hovered ? ' pr-card--hovered' : ''}`}
+      style={{ transitionDelay: `${index * 0.1}s` }}
+      onMouseEnter={(): void => setHovered(true)}
+      onMouseLeave={(): void => setHovered(false)}
+    >
+      {/* number ribbon */}
+      <div className="pr-card__ribbon">
+        <span className="pr-card__num">
+          {String(principle.id).padStart(2, '0')}
+        </span>
       </div>
-      {principles.map((principle) => {
-        return (
-          <div
-            className="text-light bg-danger text-center border   "
-            key={principle.id}
-          >
-            <h2 className="bg-secondary  d-inline-block p-1 mt-1 mb-3 ms-0 border">
-              Principle: {principle.id}
-            </h2>
-            <h2 className="mb-4">{principle.rule}</h2>
-          </div>
-        );
-      })}
+
+      {/* glow blob */}
+      <div className="pr-card__blob" />
+
+      {/* icon */}
+      <div className="pr-card__icon-wrap">
+        <span className="pr-card__icon">{principle.icon}</span>
+      </div>
+
+      {/* content */}
+      <div className="pr-card__body">
+        {principle.arabic && (
+          <p className="pr-card__arabic">{principle.arabic}</p>
+        )}
+        <p className="pr-card__rule">{principle.rule}</p>
+      </div>
+
+      {/* bottom accent */}
+      <div className="pr-card__accent" />
+    </div>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+const Principles = (): React.ReactElement => {
+  const [headerVisible, setHeaderVisible] = useState<boolean>(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect((): (() => void) => {
+    const obs = new IntersectionObserver(
+      ([entry]: IntersectionObserverEntry[]) => {
+        if (entry.isIntersecting) setHeaderVisible(true);
+      },
+      { threshold: 0.1 },
+    );
+    if (headerRef.current) obs.observe(headerRef.current);
+    return (): void => obs.disconnect();
+  }, []);
+
+  return (
+    <div className="pr-page">
+      {/* ambient background glows */}
+      <div className="pr-page__glow pr-page__glow--1" />
+      <div className="pr-page__glow pr-page__glow--2" />
+
+      <div className="pr-page__inner">
+        <PageTitle title="Main Principle's" />
+
+        {/* ── Header ── */}
+        <div
+          ref={headerRef}
+          className={`pr-header${headerVisible ? ' pr-header--visible' : ''}`}
+        >
+          <div className="pr-header__eyebrow">Core Foundation</div>
+          <h1 className="pr-header__title">
+            Principle <span className="pr-header__title-accent">of 4</span>
+          </h1>
+          <p className="pr-header__sub">
+            চারটি মূল নীতি যা একটি পরিপূর্ণ জীবনের ভিত্তি গড়ে তোলে
+          </p>
+          <div className="pr-header__line" />
+        </div>
+
+        {/* ── Cards grid ── */}
+        <div className="pr-grid">
+          {principles.map((principle: Principle, i: number) => (
+            <PrincipleCard key={principle.id} principle={principle} index={i} />
+          ))}
+        </div>
+
+        {/* ── Footer note ── */}
+        <div className="pr-footnote">
+          <span className="pr-footnote__dot" />
+          <span>এই চারটি নীতি অনুসরণ করাই সত্যিকারের সাফল্যের পথ</span>
+          <span className="pr-footnote__dot" />
+        </div>
+      </div>
     </div>
   );
 };

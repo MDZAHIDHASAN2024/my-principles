@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import myAudio from '../../assets/audio/my-heart.mp3';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
+// ─── Types ──────────────────────────────────────────────────────────────────
 interface Ayat {
   id: number;
   ayatNo: string;
   arabic: string;
   bangla: string;
-  startTime: number; // seconds
+  startTime: number;
 }
 
 interface Quote {
@@ -18,10 +17,7 @@ interface Quote {
 
 type Section = 'all' | 'jahannam' | 'jannat';
 
-// ─── Data with timestamps ─────────────────────────────────────────────────────
-// ⚠️ startTime গুলো আপনার অডিও শুনে নিজে সঠিক করুন।
-// প্রতিটি আয়াত কত সেকেন্ডে শুরু হয় সেটা দিন।
-
+// ─── Data ────────────────────────────────────────────────────────────────────
 const data: Ayat[] = [
   {
     id: 1,
@@ -186,19 +182,8 @@ const quotes: Quote[] = [
   },
 ];
 
-const DAYS: string[] = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-
 // ─── Style helpers ────────────────────────────────────────────────────────────
-
-const navBtnStyle = (active: boolean, color: string) => ({
+const navBtnStyle = (active: boolean, color: string): React.CSSProperties => ({
   padding: '8px 20px',
   borderRadius: 24,
   border: `1px solid ${active ? color : 'rgba(255,255,255,0.1)'}`,
@@ -211,7 +196,7 @@ const navBtnStyle = (active: boolean, color: string) => ({
   fontFamily: 'inherit',
 });
 
-const actionBtnStyle = (color: string) => ({
+const actionBtnStyle = (color: string): React.CSSProperties => ({
   padding: '5px 14px',
   borderRadius: 20,
   border: `1px solid ${color}44`,
@@ -224,8 +209,7 @@ const actionBtnStyle = (color: string) => ({
   transition: 'all 0.2s',
 });
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
-
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const getActiveIdFromTime = (time: number): number => {
   let active = data[0].id;
   for (let i = 0; i < data.length; i++) {
@@ -242,23 +226,18 @@ const fmtTime = (s: number): string => {
   return `${m}:${sec.toString().padStart(2, '0')}`;
 };
 
-// ─── AudioPlayer ─────────────────────────────────────────────────────────────
-
+// ─── AudioPlayer ──────────────────────────────────────────────────────────────
 interface AudioPlayerProps {
   src: string;
-  audioRef: React.RefObject<HTMLAudioElement>;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
   onTimeUpdate: (time: number) => void;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({
-  src,
-  audioRef,
-  onTimeUpdate,
-}) => {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [volume, setVolume] = useState<number>(1);
+const AudioPlayer = ({ src, audioRef, onTimeUpdate }: AudioPlayerProps) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
 
   const togglePlay = (): void => {
     const a = audioRef.current;
@@ -297,15 +276,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   return (
     <div
       style={{
-        background:
-          'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(0,0,0,0.3))',
-        border: '1px solid rgba(212,175,55,0.25)',
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(212,175,55,0.2)',
         borderRadius: 14,
-        padding: '18px 24px',
-        margin: '20px 0',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
+        padding: '16px 20px',
+        marginBottom: 24,
       }}
     >
       <audio
@@ -321,47 +296,54 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       />
 
       {/* Row 1: play + info + time */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          marginBottom: 12,
+        }}
+      >
         <button
           onClick={togglePlay}
           style={{
-            width: 48,
-            height: 48,
+            width: 44,
+            height: 44,
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #d4af37, #b8860b)',
-            border: 'none',
+            border: '1px solid rgba(212,175,55,0.4)',
+            background: 'rgba(212,175,55,0.12)',
+            color: '#d4af37',
             cursor: 'pointer',
-            flexShrink: 0,
+            fontSize: 18,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 20,
-            boxShadow: '0 0 20px rgba(212,175,55,0.35)',
-            transition: 'all 0.2s',
+            flexShrink: 0,
           }}
         >
           {isPlaying ? '⏸' : '▶'}
         </button>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              fontSize: 13,
               color: '#d4af37',
-              letterSpacing: 2,
+              fontSize: 14,
+              fontWeight: 600,
               marginBottom: 2,
             }}
           >
             🎵 সূরা আদ-দুখান তিলাওয়াত
           </div>
-          <div style={{ fontSize: 11, color: '#5a5a4a' }}>
+          <div style={{ color: '#666', fontSize: 11 }}>
             অডিও চললে আয়াত স্বয়ংক্রিয়ভাবে হাইলাইট ও স্ক্রল হবে
           </div>
         </div>
         <div
           style={{
+            color: '#888',
             fontSize: 12,
-            color: '#8a7a5a',
             fontVariantNumeric: 'tabular-nums',
+            flexShrink: 0,
           }}
         >
           {fmtTime(currentTime)} / {fmtTime(duration)}
@@ -369,56 +351,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </div>
 
       {/* Progress bar */}
-      <div style={{ position: 'relative', height: 6 }}>
+      <div style={{ position: 'relative', marginBottom: 10 }}>
         <div
           style={{
-            height: 6,
-            borderRadius: 3,
-            background: 'rgba(255,255,255,0.08)',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            style={{
-              height: '100%',
-              width: `${progress}%`,
-              background: 'linear-gradient(90deg, #b8860b, #f0c040)',
-              borderRadius: 3,
-              transition: 'width 0.3s linear',
-            }}
-          />
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={duration || 0}
-          step={0.1}
-          value={currentTime}
-          onChange={handleSeek}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            opacity: 0,
-            cursor: 'pointer',
-            height: '100%',
-          }}
-        />
-      </div>
-
-      {/* Volume */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 14, color: '#6a6a5a' }}>
-          {volume === 0 ? '🔇' : volume < 0.5 ? '🔈' : '🔊'}
-        </span>
-        <div
-          style={{
-            position: 'relative',
-            flex: 1,
-            maxWidth: 100,
             height: 4,
-            background: 'rgba(255,255,255,0.08)',
             borderRadius: 2,
+            background: 'rgba(255,255,255,0.08)',
+            position: 'relative',
             overflow: 'hidden',
           }}
         >
@@ -428,28 +367,45 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
               left: 0,
               top: 0,
               height: '100%',
-              width: `${volume * 100}%`,
-              background: 'rgba(212,175,55,0.5)',
+              width: `${progress}%`,
+              background: 'linear-gradient(90deg, #d4af37, #f0c860)',
               borderRadius: 2,
-            }}
-          />
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={volume}
-            onChange={handleVolume}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              opacity: 0,
-              cursor: 'pointer',
+              transition: 'width 0.3s',
             }}
           />
         </div>
-        <span style={{ fontSize: 11, color: '#5a5a4a', minWidth: 28 }}>
+        <input
+          type="range"
+          min={0}
+          max={duration || 100}
+          step={0.1}
+          value={currentTime}
+          onChange={handleSeek}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0,
+            cursor: 'pointer',
+            width: '100%',
+          }}
+        />
+      </div>
+
+      {/* Volume */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 14 }}>
+          {volume === 0 ? '🔇' : volume < 0.5 ? '🔈' : '🔊'}
+        </span>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          value={volume}
+          onChange={handleVolume}
+          style={{ width: 80, cursor: 'pointer' }}
+        />
+        <span style={{ color: '#666', fontSize: 11 }}>
           {Math.round(volume * 100)}%
         </span>
       </div>
@@ -458,15 +414,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-
-const Home: React.FC = () => {
-  const [search, setSearch] = useState<string>('');
-  const [showDate, setShowDate] = useState<boolean>(false);
+const Home = () => {
+  const [search, setSearch] = useState('');
+  const [showDate, setShowDate] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>('all');
   const [manualAyat, setManualAyat] = useState<number | null>(null);
   const [audioActiveId, setAudioActiveId] = useState<number | null>(null);
-  const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
-  const [quoteIdx, setQuoteIdx] = useState<number>(0);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [quoteIdx, setQuoteIdx] = useState(0);
   const [copied, setCopied] = useState<number | null>(null);
   const [visibleAyats, setVisibleAyats] = useState<Record<number, boolean>>({});
 
@@ -497,18 +452,18 @@ const Home: React.FC = () => {
       { threshold: 0.05 },
     );
     document
-      .querySelectorAll<HTMLElement>('[data-id]')
+      .querySelectorAll('[data-id]')
       .forEach((c) => observerRef.current!.observe(c));
     return () => observerRef.current?.disconnect();
   }, [search, activeSection]);
 
-  // Track audio play/pause from outside
+  // Track audio play/pause
   useEffect(() => {
     const a = audioRef.current;
     if (!a) return;
-    const onPlay = () => setIsAudioPlaying(true);
-    const onPause = () => setIsAudioPlaying(false);
-    const onEnded = () => {
+    const onPlay = (): void => setIsAudioPlaying(true);
+    const onPause = (): void => setIsAudioPlaying(false);
+    const onEnded = (): void => {
       setIsAudioPlaying(false);
       setAudioActiveId(null);
     };
@@ -535,13 +490,11 @@ const Home: React.FC = () => {
     });
   }, []);
 
-  // Click on ayat card → seek audio + start playing
+  // Click on ayat card → seek audio
   const handleAyatClick = (item: Ayat): void => {
-    // toggle manual highlight if audio is not playing
     if (!isAudioPlaying) {
       setManualAyat((prev) => (prev === item.id ? null : item.id));
     }
-    // Always seek audio to that ayat's time
     const a = audioRef.current;
     if (a) {
       a.currentTime = item.startTime;
@@ -550,7 +503,6 @@ const Home: React.FC = () => {
     }
   };
 
-  // Active id: audio-driven when playing, manual otherwise
   const activeId = isAudioPlaying ? audioActiveId : manualAyat;
 
   const filtered: Ayat[] = data.filter((item) => {
@@ -573,34 +525,17 @@ const Home: React.FC = () => {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const now = new Date();
-
-  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div
       style={{
         minHeight: '100vh',
         background:
-          'linear-gradient(135deg, #0a0a0f 0%, #0d1117 40%, #0a0f0a 100%)',
-        fontFamily: "'Georgia', serif",
-        color: '#e8dcc8',
-        position: 'relative',
-        overflow: 'hidden',
+          'linear-gradient(160deg, #0a0a0f 0%, #0d1117 50%, #0a0a0f 100%)',
+        color: '#e8e8e8',
+        fontFamily: "'Segoe UI', system-ui, sans-serif",
+        padding: '0 0 60px',
       }}
     >
-      <style>{`
-        @keyframes fadeIn  { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes pulse   { 0%,100%{ box-shadow:0 0 0 0 rgba(212,175,55,0.4); } 50%{ box-shadow:0 0 0 10px rgba(212,175,55,0); } }
-        @keyframes glow    { 0%,100%{ opacity:0.6; } 50%{ opacity:1; } }
-        @keyframes barUp   { 0%,100%{ transform:scaleY(0.4); } 50%{ transform:scaleY(1); } }
-        * { box-sizing:border-box; margin:0; padding:0; }
-        ::-webkit-scrollbar { width:4px; }
-        ::-webkit-scrollbar-track { background:#0a0a0f; }
-        ::-webkit-scrollbar-thumb { background:#3a2a0a; border-radius:4px; }
-        input::placeholder { color:#4a4a3a; }
-        button:hover { filter:brightness(1.15); transform:translateY(-1px); }
-      `}</style>
-
       {/* Background */}
       <div
         style={{
@@ -608,70 +543,93 @@ const Home: React.FC = () => {
           inset: 0,
           pointerEvents: 'none',
           zIndex: 0,
-          backgroundImage: `
-          radial-gradient(circle at 20% 20%, rgba(184,134,11,0.06) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(0,100,50,0.06) 0%, transparent 50%),
-          repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(184,134,11,0.015) 40px, rgba(184,134,11,0.015) 41px)
-        `,
         }}
-      />
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '10%',
+            left: '5%',
+            width: 300,
+            height: 300,
+            borderRadius: '50%',
+            background:
+              'radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 70%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '20%',
+            right: '5%',
+            width: 400,
+            height: 400,
+            borderRadius: '50%',
+            background:
+              'radial-gradient(circle, rgba(100,150,255,0.03) 0%, transparent 70%)',
+          }}
+        />
+      </div>
 
       <div
         style={{
-          maxWidth: 860,
-          margin: '0 auto',
-          padding: '0 16px',
           position: 'relative',
           zIndex: 1,
+          maxWidth: 720,
+          margin: '0 auto',
+          padding: '0 16px',
         }}
       >
         {/* ── HEADER ── */}
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '48px 24px 32px',
-            borderBottom: '1px solid rgba(184,134,11,0.2)',
-          }}
-        >
+        <div style={{ textAlign: 'center', padding: '48px 0 32px' }}>
           <div
             style={{
-              fontSize: 36,
-              color: '#d4af37',
-              marginBottom: 8,
-              fontFamily: "'Traditional Arabic','Scheherazade New',serif",
-              letterSpacing: 2,
-              textShadow: '0 0 30px rgba(212,175,55,0.4)',
+              fontSize: 13,
+              letterSpacing: 4,
+              color: '#888',
+              marginBottom: 16,
             }}
           >
             بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
           </div>
           <div
             style={{
-              fontSize: 13,
+              fontSize: 11,
               letterSpacing: 6,
-              color: '#8a7a5a',
+              color: '#555',
+              marginBottom: 8,
               textTransform: 'uppercase',
-              marginBottom: 4,
             }}
           >
             Surah
           </div>
-          <div
+          <h1
             style={{
-              fontSize: 28,
-              fontWeight: 'bold',
-              color: '#f0e0a0',
-              marginBottom: 4,
+              fontSize: 'clamp(28px, 5vw, 42px)',
+              fontWeight: 300,
+              color: '#d4af37',
+              margin: '0 0 8px',
+              letterSpacing: 2,
             }}
           >
             الدُّخَان — Ad-Dukhan
-          </div>
-          <div style={{ fontSize: 13, color: '#7a8a7a', letterSpacing: 3 }}>
+          </h1>
+          <div style={{ fontSize: 13, color: '#666', letterSpacing: 2 }}>
             আয়াত ৪০ – ৫৯
           </div>
+          <div
+            style={{
+              width: 60,
+              height: 1,
+              background:
+                'linear-gradient(90deg, transparent, #d4af37, transparent)',
+              margin: '20px auto 0',
+            }}
+          />
         </div>
 
         {/* ── AUDIO PLAYER ── */}
+
         <AudioPlayer
           src={myAudio}
           audioRef={audioRef}
@@ -684,22 +642,20 @@ const Home: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
-              background: 'rgba(212,175,55,0.08)',
-              border: '1px solid rgba(212,175,55,0.2)',
-              borderRadius: 8,
-              padding: '8px 16px',
-              marginBottom: 12,
-              animation: 'fadeIn 0.3s ease',
+              gap: 12,
+              background: 'rgba(212,175,55,0.06)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              borderRadius: 10,
+              padding: '10px 16px',
+              marginBottom: 20,
             }}
           >
-            {/* Animated sound bars */}
             <div
               style={{
                 display: 'flex',
+                alignItems: 'flex-end',
                 gap: 2,
-                alignItems: 'center',
-                height: 18,
+                height: 20,
               }}
             >
               {[0.5, 1, 0.7, 0.9, 0.4, 1, 0.6].map((h, i) => (
@@ -709,63 +665,57 @@ const Home: React.FC = () => {
                     width: 3,
                     borderRadius: 2,
                     background: '#d4af37',
-                    height: `${h * 18}px`,
-                    animation: `barUp ${0.5 + i * 0.07}s ease-in-out infinite`,
-                    animationDelay: `${i * 0.05}s`,
+                    height: `${h * 100}%`,
+                    animation: `soundBar 0.8s ease-in-out ${i * 0.1}s infinite alternate`,
                   }}
                 />
               ))}
             </div>
-            <span style={{ fontSize: 13, color: '#d4af37', letterSpacing: 1 }}>
-              এখন পড়া হচ্ছে — আয়াত{' '}
-              {data.find((d) => d.id === audioActiveId)?.ayatNo}
-            </span>
-            <span
-              style={{ fontSize: 11, color: '#6a6a5a', marginLeft: 'auto' }}
-            >
-              যেকোনো আয়াতে ক্লিক করলে সেখান থেকে শুরু হবে
-            </span>
+            <div>
+              <div style={{ color: '#d4af37', fontSize: 13, fontWeight: 500 }}>
+                এখন পড়া হচ্ছে — আয়াত{' '}
+                {data.find((d) => d.id === audioActiveId)?.ayatNo}
+              </div>
+              <div style={{ color: '#666', fontSize: 11, marginTop: 2 }}>
+                যেকোনো আয়াতে ক্লিক করলে সেখান থেকে শুরু হবে
+              </div>
+            </div>
           </div>
         )}
 
         {/* ── ROTATING QUOTE ── */}
         <div
           style={{
-            background:
-              'linear-gradient(135deg, rgba(184,134,11,0.08), rgba(0,80,40,0.08))',
-            border: '1px solid rgba(184,134,11,0.15)',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(212,175,55,0.12)',
             borderRadius: 12,
-            padding: '24px 32px',
-            margin: '16px 0',
+            padding: '20px 24px',
+            marginBottom: 28,
             textAlign: 'center',
-            position: 'relative',
-            overflow: 'hidden',
           }}
         >
           <div
             style={{
-              position: 'absolute',
-              top: 12,
-              left: 20,
-              fontSize: 60,
-              color: 'rgba(212,175,55,0.08)',
-              userSelect: 'none',
+              fontSize: 28,
+              color: 'rgba(212,175,55,0.3)',
               lineHeight: 1,
+              marginBottom: 8,
             }}
           >
             "
           </div>
           <div
             style={{
-              fontSize: 17,
-              color: '#e8d8a0',
-              lineHeight: 1.8,
+              fontSize: 15,
+              color: '#ccc',
+              lineHeight: 1.7,
               marginBottom: 8,
+              minHeight: 48,
             }}
           >
             {quotes[quoteIdx].text}
           </div>
-          <div style={{ fontSize: 12, color: '#8a7a5a', letterSpacing: 2 }}>
+          <div style={{ fontSize: 11, color: '#666', letterSpacing: 1 }}>
             {quotes[quoteIdx].ref}
           </div>
           <div
@@ -773,7 +723,7 @@ const Home: React.FC = () => {
               display: 'flex',
               justifyContent: 'center',
               gap: 6,
-              marginTop: 12,
+              marginTop: 14,
             }}
           >
             {quotes.map((_, i) => (
@@ -799,8 +749,7 @@ const Home: React.FC = () => {
           style={{
             display: 'flex',
             gap: 8,
-            justifyContent: 'center',
-            padding: '16px 0',
+            marginBottom: 20,
             flexWrap: 'wrap',
           }}
         >
@@ -817,8 +766,8 @@ const Home: React.FC = () => {
           ).map(({ key, label, color }) => (
             <button
               key={key}
-              style={navBtnStyle(activeSection === key, color)}
               onClick={() => setActiveSection(key)}
+              style={navBtnStyle(activeSection === key, color)}
             >
               {label}
             </button>
@@ -826,71 +775,79 @@ const Home: React.FC = () => {
         </div>
 
         {/* ── SEARCH ── */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(184,134,11,0.2)',
-            borderRadius: 8,
-            padding: '10px 16px',
-            margin: '4px 0 8px',
-            gap: 10,
-          }}
-        >
-          <span style={{ color: '#6a6a5a', fontSize: 16 }}>🔍</span>
-          <input
+        <div style={{ position: 'relative', marginBottom: 8 }}>
+          <span
             style={{
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              color: '#e8dcc8',
-              fontSize: 15,
-              flex: 1,
-              fontFamily: 'inherit',
+              position: 'absolute',
+              left: 14,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#555',
+              fontSize: 14,
             }}
-            type="text"
+          >
+            🔍
+          </span>
+          <input
             value={search}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearch(e.target.value)
             }
             placeholder="আয়াত নম্বর বা বাংলা শব্দ দিয়ে খুঁজুন..."
+            style={{
+              width: '100%',
+              padding: '11px 40px 11px 42px',
+              borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(255,255,255,0.03)',
+              color: '#ddd',
+              fontSize: 14,
+              outline: 'none',
+              boxSizing: 'border-box',
+              fontFamily: 'inherit',
+            }}
           />
           {search && (
             <button
+              onClick={() => setSearch('')}
               style={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
                 background: 'none',
                 border: 'none',
-                color: '#6a6a5a',
+                color: '#555',
                 cursor: 'pointer',
                 fontSize: 16,
               }}
-              onClick={() => setSearch('')}
             >
               ✕
             </button>
           )}
         </div>
-
         <div
           style={{
+            color: '#555',
             fontSize: 12,
-            color: '#6a7a6a',
+            marginBottom: 16,
             textAlign: 'right',
-            marginBottom: 12,
-            letterSpacing: 1,
           }}
         >
           {filtered.length} টি আয়াত পাওয়া গেছে
         </div>
 
         {/* ── AYAT LIST ── */}
+        <style>{`
+          @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.1); } 50% { box-shadow: 0 0 20px 4px rgba(212,175,55,0.12); } }
+          @keyframes soundBar { from { opacity: 0.4; } to { opacity: 1; } }
+        `}</style>
+
         {filtered.map((item) => {
           const n = parseInt(item.ayatNo, 10);
           const isJahannam = n <= 50;
           const isActive = activeId === item.id;
           const isVisible = visibleAyats[item.id] ?? false;
-
           const accentColor = isJahannam ? '#ff5533' : '#33cc77';
           const borderColor = isJahannam
             ? 'rgba(220,80,40,0.55)'
@@ -928,13 +885,15 @@ const Home: React.FC = () => {
               {/* Color strip bg */}
               <div
                 style={{
-                  background: isJahannam
-                    ? 'linear-gradient(90deg, rgba(180,30,10,0.18), transparent)'
-                    : 'linear-gradient(90deg, rgba(0,120,60,0.18), transparent)',
                   position: 'absolute',
-                  inset: 0,
-                  borderRadius: 12,
-                  pointerEvents: 'none',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 2,
+                  background: isActive
+                    ? `linear-gradient(90deg, transparent, ${accentColor}, transparent)`
+                    : 'transparent',
+                  transition: 'all 0.3s',
                 }}
               />
 
@@ -946,139 +905,119 @@ const Home: React.FC = () => {
                     left: 0,
                     top: 0,
                     bottom: 0,
-                    width: 4,
+                    width: 3,
+                    background: accentColor,
                     borderRadius: '12px 0 0 12px',
-                    background: isJahannam
-                      ? 'linear-gradient(180deg, #ff4422, #cc2200)'
-                      : 'linear-gradient(180deg, #22cc66, #009933)',
-                    animation: 'glow 1s ease-in-out infinite alternate',
                   }}
                 />
               )}
 
+              {/* Ayat badge */}
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 14,
-                  position: 'relative',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: '50%',
+                  border: `1px solid ${isActive ? accentColor + '66' : 'rgba(255,255,255,0.1)'}`,
+                  background: isActive
+                    ? `${accentColor}11`
+                    : 'rgba(255,255,255,0.02)',
+                  color: isActive ? accentColor : '#888',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  marginBottom: 14,
+                  transition: 'all 0.3s',
                 }}
               >
-                {/* Ayat badge */}
+                {item.ayatNo}
+              </div>
+
+              {/* Arabic */}
+              <div
+                style={{
+                  fontSize: 'clamp(18px, 3vw, 24px)',
+                  lineHeight: 1.8,
+                  color: isActive ? '#fff' : '#ddd',
+                  direction: 'rtl',
+                  textAlign: 'right',
+                  marginBottom: 12,
+                  fontFamily: "'Scheherazade New', 'Traditional Arabic', serif",
+                  transition: 'color 0.3s',
+                }}
+              >
+                {item.arabic}
+              </div>
+
+              {/* Bangla */}
+              <div
+                style={{
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  color: isActive ? '#bbb' : '#777',
+                  transition: 'color 0.3s',
+                }}
+              >
+                {item.bangla}
+              </div>
+
+              {/* Playing indicator */}
+              {isActive && isAudioPlaying && (
                 <div
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    flexShrink: 0,
-                    border: `1px solid ${isActive ? borderColor : 'rgba(212,175,55,0.3)'}`,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 13,
-                    fontWeight: 'bold',
-                    color: isActive ? accentColor : '#d4af37',
-                    background: isActive ? `${accentColor}18` : 'transparent',
-                    boxShadow: isActive ? `0 0 14px ${accentColor}40` : 'none',
-                    transition: 'all 0.3s',
+                    gap: 6,
+                    marginTop: 10,
                   }}
                 >
-                  {item.ayatNo}
-                </div>
-
-                <div style={{ flex: 1 }}>
-                  {/* Arabic */}
                   <div
                     style={{
-                      fontSize: 22,
-                      lineHeight: 2,
-                      textAlign: 'right',
-                      direction: 'rtl',
-                      color: isActive ? '#fff8e0' : '#f0e8c0',
-                      fontFamily:
-                        "'Traditional Arabic','Scheherazade New',serif",
-                      marginBottom: 8,
-                      transition: 'color 0.3s',
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      background: accentColor,
+                      animation: 'pulse 1s infinite',
                     }}
-                  >
-                    {item.arabic}
-                  </div>
-
-                  {/* Bangla */}
-                  <div
+                  />
+                  <span
                     style={{
-                      fontSize: 15,
-                      lineHeight: 1.9,
-                      color: isActive ? '#d0c8a0' : '#b0a888',
-                      transition: 'color 0.3s',
+                      fontSize: 11,
+                      color: accentColor,
+                      letterSpacing: 1,
                     }}
                   >
-                    {item.bangla}
-                  </div>
-
-                  {/* Playing indicator */}
-                  {isActive && isAudioPlaying && (
-                    <div
-                      style={{
-                        marginTop: 6,
-                        fontSize: 11,
-                        color: accentColor,
-                        letterSpacing: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        animation: 'glow 1s ease-in-out infinite alternate',
-                      }}
-                    >
-                      ● এখন তিলাওয়াত হচ্ছে
-                    </div>
-                  )}
-
-                  {/* Manual expand — copy + tag */}
-                  {isActive && !isAudioPlaying && (
-                    <div
-                      style={{
-                        marginTop: 12,
-                        paddingTop: 12,
-                        borderTop: '1px solid rgba(255,255,255,0.06)',
-                        display: 'flex',
-                        gap: 8,
-                        justifyContent: 'flex-end',
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <button
-                        style={actionBtnStyle('#d4af37')}
-                        onClick={(e: React.MouseEvent) => {
-                          e.stopPropagation();
-                          handleCopy(`${item.arabic}\n${item.bangla}`, item.id);
-                        }}
-                      >
-                        {copied === item.id ? '✓ কপি হয়েছে' : 'কপি করুন'}
-                      </button>
-                      <div
-                        style={{
-                          padding: '5px 14px',
-                          borderRadius: 20,
-                          fontSize: 12,
-                          letterSpacing: 1,
-                          background: isJahannam
-                            ? 'rgba(200,50,10,0.15)'
-                            : 'rgba(20,150,60,0.15)',
-                          border: isJahannam
-                            ? '1px solid #c0301044'
-                            : '1px solid #20a06044',
-                          color: isJahannam ? '#e06040' : '#40c080',
-                        }}
-                      >
-                        {isJahannam
-                          ? '🔥 জাহান্নামের আয়াত'
-                          : '🌿 জান্নাতের আয়াত'}
-                      </div>
-                    </div>
-                  )}
+                    ● এখন তিলাওয়াত হচ্ছে
+                  </span>
                 </div>
-              </div>
+              )}
+
+              {/* Manual expand — copy + tag */}
+              {isActive && !isAudioPlaying && (
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 8,
+                    marginTop: 12,
+                    alignItems: 'center',
+                  }}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopy(`${item.arabic}\n${item.bangla}`, item.id);
+                    }}
+                    style={actionBtnStyle('#d4af37')}
+                  >
+                    {copied === item.id ? '✓ কপি হয়েছে' : 'কপি করুন'}
+                  </button>
+                  <span style={{ fontSize: 11, color: accentColor + 'aa' }}>
+                    {isJahannam ? '🔥 জাহান্নামের আয়াত' : '🌿 জান্নাতের আয়াত'}
+                  </span>
+                </div>
+              )}
             </div>
           );
         })}
@@ -1086,88 +1025,80 @@ const Home: React.FC = () => {
         {/* Empty state */}
         {filtered.length === 0 && (
           <div
-            style={{ textAlign: 'center', padding: '48px 0', color: '#4a4a3a' }}
+            style={{ textAlign: 'center', padding: '60px 20px', color: '#444' }}
           >
-            <div style={{ fontSize: 32, marginBottom: 12 }}>☽</div>
-            <div>কোনো আয়াত পাওয়া যায়নি</div>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>☽</div>
+            <div style={{ fontSize: 14 }}>কোনো আয়াত পাওয়া যায়নি</div>
           </div>
         )}
 
         {/* ── DATE SECTION ── */}
-        <div style={{ textAlign: 'center', padding: '24px 0 8px' }}>
+        <div style={{ marginTop: 32 }}>
           <button
-            style={{
-              padding: '10px 28px',
-              borderRadius: 24,
-              border: '1px solid rgba(212,175,55,0.3)',
-              background: showDate ? 'rgba(212,175,55,0.12)' : 'transparent',
-              color: '#d4af37',
-              cursor: 'pointer',
-              fontSize: 14,
-              letterSpacing: 1,
-              fontFamily: 'inherit',
-              transition: 'all 0.3s',
-            }}
             onClick={() => setShowDate(!showDate)}
+            style={{
+              ...actionBtnStyle('#888'),
+              width: '100%',
+              padding: '10px',
+              marginBottom: showDate ? 12 : 0,
+            }}
           >
-            {showDate ? '📅 তারিখ লুকান' : '📅 আজকের তারিখ দেখুন'}
+            {showDate ? '📅 তারিখ লুকান' : '📅 অ্যাপ শুরুর তারিখ দেখুন'}
           </button>
-
           {showDate && (
             <div
               style={{
-                background: 'rgba(0,80,40,0.15)',
-                border: '1px solid rgba(0,150,60,0.2)',
-                borderRadius: 10,
-                padding: '16px 24px',
-                textAlign: 'center',
-                marginTop: 8,
-                animation: 'fadeIn 0.4s ease',
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 12,
+                padding: '16px 20px',
               }}
             >
               <div
                 style={{
-                  color: '#d4af37',
-                  fontSize: 13,
+                  fontSize: 11,
                   letterSpacing: 3,
-                  marginBottom: 12,
+                  color: '#555',
+                  marginBottom: 14,
                   textTransform: 'uppercase',
                 }}
               >
-                আজকের তারিখ
+                অ্যাপ শুরুর তারিখ
               </div>
               {(
                 [
                   {
                     label: 'English',
-                    value: now.toLocaleDateString('en-GB'),
+                    value: '19/02/2026',
                     icon: '🌍',
                   },
                   {
-                    label: 'বাংলা',
-                    value: now.toLocaleDateString('bn-BD'),
+                    label: 'Bangla',
+                    value: '19/02/2026',
                     icon: '🇧🇩',
                   },
-                  { label: 'দিন', value: DAYS[now.getDay()], icon: '📆' },
+                  {
+                    label: 'Arabic',
+                    value: '19/02/2026',
+                    icon: 'UAE',
+                  },
                 ] as { label: string; value: string; icon: string }[]
               ).map(({ label, value, icon }) => (
                 <div
                   key={label}
                   style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '6px 0',
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                    fontSize: 14,
+                    gap: 10,
+                    padding: '8px 0',
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
                   }}
                 >
-                  <span style={{ color: '#8a8a6a' }}>
-                    {icon} {label}
+                  <span style={{ fontSize: 16 }}>{icon}</span>
+                  <span style={{ color: '#666', fontSize: 12, width: 60 }}>
+                    {label}
                   </span>
-                  <span style={{ color: '#e8d8a0', fontWeight: 'bold' }}>
-                    {value}
-                  </span>
+                  <span style={{ color: '#aaa', fontSize: 14 }}>{value}</span>
                 </div>
               ))}
             </div>
@@ -1176,21 +1107,22 @@ const Home: React.FC = () => {
 
         {/* ── FOOTER ── */}
         <div
-          style={{
-            textAlign: 'center',
-            padding: '32px 16px',
-            marginTop: 24,
-            borderTop: '1px solid rgba(184,134,11,0.1)',
-            fontSize: 12,
-            color: '#4a4a3a',
-            letterSpacing: 2,
-          }}
+          style={{ textAlign: 'center', padding: '48px 0 20px', color: '#333' }}
         >
-          <div style={{ color: '#d4af37', fontSize: 20, opacity: 0.4 }}>
+          <div style={{ fontSize: 16, letterSpacing: 8, marginBottom: 10 }}>
             ❖ ✦ ❖
           </div>
-          <div style={{ marginTop: 8 }}>SURA AD-DUKHAN · AYAT 40–59</div>
-          <div style={{ marginTop: 4, color: '#3a3a2a' }}>سورة الدخان</div>
+          <div
+            style={{
+              fontSize: 10,
+              letterSpacing: 4,
+              marginBottom: 6,
+              textTransform: 'uppercase',
+            }}
+          >
+            SURA AD-DUKHAN · AYAT 40–59
+          </div>
+          <div style={{ fontSize: 18, color: '#2a2a2a' }}>سورة الدخان</div>
         </div>
       </div>
     </div>
