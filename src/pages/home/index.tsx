@@ -1079,7 +1079,7 @@ const Home = () => {
                   },
                   {
                     label: 'Arabic',
-                    value: '19/02/2026',
+                    value: '1/02/2026',
                     icon: 'UAE',
                   },
                 ] as { label: string; value: string; icon: string }[]
