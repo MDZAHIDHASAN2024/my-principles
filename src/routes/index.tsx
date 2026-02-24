@@ -15,6 +15,7 @@ import Works from '../pages/works/works';
 import FoodControl from '../pages/foodControl/foodControl';
 import Jahannam from '../pages/jahannam/jahannam';
 import Jannat from '../pages/jannat/jannat';
+import LoginPage from '../pages/loginPage';
 
 const Index = () => {
   return (
@@ -37,6 +38,7 @@ const Index = () => {
         {/* <Route path="/myContract" element={<MyContract />} /> */}
         <Route path="/jahannam" element={<Jahannam />} />
         <Route path="/jannat" element={<Jannat />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />

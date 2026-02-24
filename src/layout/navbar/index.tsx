@@ -1,28 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import {
   FaBalanceScale,
   FaChevronDown,
-  FaUser,
   FaSignOutAlt,
+  FaUser,
+  FaBars,
+  FaTimes,
 } from 'react-icons/fa';
 import './index.css';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// ─── Types ───────────────────────────────────────────────────────────────────
 interface DropdownItem {
   label: string;
   to: string;
 }
-
 interface NavItem {
   label: string;
   to: string;
   authRequired: boolean;
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
+// ─── Data ────────────────────────────────────────────────────────────────────
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', to: '/', authRequired: false },
   { label: 'Intro', to: '/Intro', authRequired: true },
@@ -39,198 +38,338 @@ const FORMULA_ITEMS: DropdownItem[] = [
   { label: 'Tour Plan', to: '/tourPlanFormula' },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+const getStoredEmail = (): string => {
+  try {
+    return JSON.parse(localStorage.getItem('user') || '{}').email || '';
+  } catch {
+    return '';
+  }
+};
 
+// ─── Component ───────────────────────────────────────────────────────────────
 const Index = (): React.ReactElement => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    () => !!localStorage.getItem('user'),
+  );
+  const [userEmail, setUserEmail] = useState<string>(getStoredEmail);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [mobileFormulas, setMobileFormulas] = useState<boolean>(false);
+
+  // ── Scroll hide / show state ────────────────────────────────────────────
   const [scrolled, setScrolled] = useState<boolean>(false);
-  const [activeFormula, setActiveFormula] = useState<string | null>(null);
+  const [navHidden, setNavHidden] = useState<boolean>(false);
+  const lastScrollY = useRef<number>(0);
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const mobileRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLLIElement>(null);
 
-  // Scroll shadow
+  // Prevent body scroll when drawer open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
+  // ── Scroll: shadow + hide/show ──────────────────────────────────────────
   useEffect((): (() => void) => {
-    const onScroll = (): void => setScrolled(window.scrollY > 12);
+    const HIDE_THRESHOLD = 80;
+    const SHOW_UP_DELTA = 8;
+
+    const onScroll = (): void => {
+      const current = window.scrollY;
+      const delta = current - lastScrollY.current;
+
+      setScrolled(current > 10);
+
+      if (current < HIDE_THRESHOLD) {
+        setNavHidden(false);
+      } else if (delta > 4) {
+        setNavHidden(true);
+        setDropdownOpen(false);
+      } else if (delta < -SHOW_UP_DELTA) {
+        setNavHidden(false);
+      }
+
+      lastScrollY.current = current;
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
-    return (): void => window.removeEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Close dropdown on outside click
   useEffect((): (() => void) => {
-    const handler = (e: MouseEvent): void => {
+    const fn = (e: MouseEvent): void => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target as Node)
-      ) {
+      )
         setDropdownOpen(false);
-      }
     };
-    document.addEventListener('mousedown', handler);
-    return (): void => document.removeEventListener('mousedown', handler);
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
   }, []);
 
-  const handleLogin = (): void => {
-    setIsLoggedIn((prev: boolean) => !prev);
+  // Sync login state
+  useEffect((): (() => void) => {
+    const sync = (): void => {
+      setIsLoggedIn(!!localStorage.getItem('user'));
+      setUserEmail(getStoredEmail());
+    };
+    window.addEventListener('storage', sync);
+    window.addEventListener('userLoggedIn', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('userLoggedIn', sync);
+    };
+  }, []);
+
+  const handleLogout = (): void => {
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    setUserEmail('');
     setMobileOpen(false);
+    navigate('/login');
   };
 
-  const visibleNavItems: NavItem[] = NAV_ITEMS.filter(
-    (item: NavItem) => !item.authRequired || isLoggedIn,
+  const closeMobile = (): void => setMobileOpen(false);
+  const goLogin = (): void => {
+    navigate('/login');
+    closeMobile();
+  };
+
+  const visibleItems: NavItem[] = NAV_ITEMS.filter(
+    (item) => !item.authRequired || isLoggedIn,
   );
+
+  const avatarLetter: string = userEmail ? userEmail[0].toUpperCase() : 'U';
+  const displayName: string = userEmail ? userEmail.split('@')[0] : '';
+
+  const navClass = [
+    'nx-nav',
+    scrolled ? 'nx-nav--scrolled' : '',
+    navHidden ? 'nx-nav--hidden' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <>
-      <nav className={`nx-nav${scrolled ? ' nx-nav--scrolled' : ''}`}>
+      {/* ══════════════════════ NAVBAR ══════════════════════ */}
+      <nav className={navClass}>
+        <div className="nx-nav__topline" />
+
         <div className="nx-inner">
-          {/* ── BRAND ── */}
-          <Link to="/" className="nx-brand">
-            <FaBalanceScale className="nx-brand__icon" />
-            <span className="nx-brand__text">MYLOS</span>
+          {/* Brand */}
+          <Link to="/" className="nx-brand" onClick={closeMobile}>
+            <span className="nx-brand__orb">
+              <FaBalanceScale />
+            </span>
+            <span className="nx-brand__word">MYLOS</span>
           </Link>
 
-          {/* ── DESKTOP LINKS ── */}
-          <div className="nx-links">
-            {visibleNavItems.map((item: NavItem) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }: { isActive: boolean }): string =>
-                  `nx-link${isActive ? ' nx-link--active' : ''}`
-                }
-              >
-                {item.label}
-              </NavLink>
+          {/* Desktop links */}
+          <ul className="nx-links">
+            {visibleItems.map((item) => (
+              <li key={item.to}>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `nx-link${isActive ? ' nx-link--active' : ''}`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              </li>
             ))}
 
             {/* Formulas dropdown */}
-            <div className="nx-dropdown" ref={dropdownRef}>
+            <li className="nx-dd" ref={dropdownRef}>
               <button
-                className={`nx-link nx-dropdown__trigger${dropdownOpen ? ' nx-link--active' : ''}`}
-                onClick={(): void => setDropdownOpen((p: boolean) => !p)}
+                className={`nx-link nx-dd__trigger${dropdownOpen ? ' nx-link--active' : ''}`}
+                onClick={() => setDropdownOpen((p) => !p)}
                 aria-expanded={dropdownOpen}
               >
                 Formulas
                 <FaChevronDown
-                  className={`nx-dropdown__chevron${dropdownOpen ? ' nx-dropdown__chevron--open' : ''}`}
+                  className={`nx-dd__chevron${dropdownOpen ? ' nx-dd__chevron--open' : ''}`}
                 />
               </button>
 
               <div
-                className={`nx-dropdown__menu${dropdownOpen ? ' nx-dropdown__menu--open' : ''}`}
+                className={`nx-dd__panel${dropdownOpen ? ' nx-dd__panel--open' : ''}`}
               >
-                <div className="nx-dropdown__label">Life-Changing Formulas</div>
-                {FORMULA_ITEMS.map((f: DropdownItem) => (
+                <p className="nx-dd__caption">✦ Life-Changing Formulas</p>
+                {FORMULA_ITEMS.map((f, i) => (
                   <NavLink
                     key={f.to}
                     to={f.to}
-                    className="nx-dropdown__item"
-                    onMouseEnter={(): void => setActiveFormula(f.to)}
-                    onMouseLeave={(): void => setActiveFormula(null)}
-                    onClick={(): void => setDropdownOpen(false)}
+                    className={({ isActive }) =>
+                      `nx-dd__item${isActive ? ' nx-dd__item--active' : ''}`
+                    }
+                    style={{ '--delay': `${i * 0.05}s` } as React.CSSProperties}
+                    onClick={() => setDropdownOpen(false)}
                   >
-                    <span
-                      className={`nx-dropdown__dot${activeFormula === f.to ? ' nx-dropdown__dot--active' : ''}`}
-                    />
+                    <span className="nx-dd__dot" />
                     {f.label}
                   </NavLink>
                 ))}
               </div>
-            </div>
+            </li>
+          </ul>
+
+          {/* Desktop Auth */}
+          <div className="nx-auth">
+            {isLoggedIn ? (
+              <div className="nx-user-pill">
+                <span className="nx-avatar">{avatarLetter}</span>
+                <span className="nx-user-pill__name">{displayName}</span>
+                <button
+                  className="nx-user-pill__logout"
+                  onClick={handleLogout}
+                  title="Logout"
+                >
+                  <FaSignOutAlt />
+                </button>
+              </div>
+            ) : (
+              <button className="nx-signin-btn" onClick={goLogin}>
+                <span className="nx-signin-btn__fill" />
+                <span className="nx-signin-btn__shimmer" />
+                <FaUser className="nx-signin-btn__ico" />
+                <span>Sign In</span>
+                <span className="nx-signin-btn__arr">›</span>
+              </button>
+            )}
           </div>
 
-          {/* ── AUTH BUTTON ── */}
+          {/* Hamburger */}
           <button
-            className={`nx-auth${isLoggedIn ? ' nx-auth--out' : ' nx-auth--in'}`}
-            onClick={handleLogin}
-          >
-            {isLoggedIn ? (
-              <>
-                <FaSignOutAlt className="nx-auth__icon" />
-                <span>Log Out</span>
-              </>
-            ) : (
-              <>
-                <FaUser className="nx-auth__icon" />
-                <span>Log In</span>
-              </>
-            )}
-          </button>
-
-          {/* ── HAMBURGER ── */}
-          <button
-            className={`nx-hamburger${mobileOpen ? ' nx-hamburger--open' : ''}`}
-            onClick={(): void => setMobileOpen((p: boolean) => !p)}
+            className={`nx-ham${mobileOpen ? ' nx-ham--open' : ''}`}
+            onClick={() => setMobileOpen((p) => !p)}
             aria-label="Toggle menu"
           >
-            <span />
-            <span />
-            <span />
+            {mobileOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
       </nav>
 
-      {/* ── MOBILE DRAWER ── */}
+      {/* ✅ SPACER — এই div টা navbar এর height এর সমান জায়গা নেয়।
+          যেকোনো page এ Index render হলে এই spacer সব content কে
+          navbar এর নিচে ঠেলে দেবে। */}
+      <div className="nx-spacer" />
+
+      {/* Backdrop */}
       <div
-        className={`nx-drawer${mobileOpen ? ' nx-drawer--open' : ''}`}
-        ref={mobileRef}
-      >
-        <div className="nx-drawer__inner">
-          {visibleNavItems.map((item: NavItem, i: number) => (
+        className={`nx-backdrop${mobileOpen ? ' nx-backdrop--open' : ''}`}
+        onClick={closeMobile}
+      />
+
+      {/* ══════════════════════ MOBILE DRAWER ══════════════════════ */}
+      <aside className={`nx-drawer${mobileOpen ? ' nx-drawer--open' : ''}`}>
+        {/* Top bar */}
+        <div className="nx-drawer__topbar">
+          <Link to="/" className="nx-brand" onClick={closeMobile}>
+            <span className="nx-brand__orb nx-brand__orb--sm">
+              <FaBalanceScale />
+            </span>
+            <span className="nx-brand__word">MYLOS</span>
+          </Link>
+          <button
+            className="nx-drawer__x"
+            onClick={closeMobile}
+            aria-label="Close"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        {/* User card */}
+        <div className="nx-drawer__card">
+          {isLoggedIn ? (
+            <>
+              <span className="nx-avatar nx-avatar--lg">{avatarLetter}</span>
+              <div className="nx-drawer__card-info">
+                <span className="nx-drawer__card-name">{displayName}</span>
+                <span className="nx-drawer__card-email">{userEmail}</span>
+              </div>
+            </>
+          ) : (
+            <span className="nx-drawer__card-guest">👋 Welcome, Guest</span>
+          )}
+        </div>
+
+        {/* Nav */}
+        <nav className="nx-drawer__nav">
+          {visibleItems.map((item, i) => (
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }: { isActive: boolean }): string =>
+              className={({ isActive }) =>
                 `nx-drawer__link${isActive ? ' nx-drawer__link--active' : ''}`
               }
-              style={{ animationDelay: `${i * 0.05}s` }}
-              onClick={(): void => setMobileOpen(false)}
+              style={{ '--i': i } as React.CSSProperties}
+              onClick={closeMobile}
             >
               {item.label}
             </NavLink>
           ))}
 
-          <div className="nx-drawer__divider">Formulas</div>
-          {FORMULA_ITEMS.map((f: DropdownItem, i: number) => (
-            <NavLink
-              key={f.to}
-              to={f.to}
-              className="nx-drawer__link nx-drawer__link--sub"
-              style={{
-                animationDelay: `${(visibleNavItems.length + i) * 0.05}s`,
-              }}
-              onClick={(): void => setMobileOpen(false)}
+          {/* Accordion */}
+          <div className="nx-acc">
+            <button
+              className="nx-acc__btn"
+              onClick={() => setMobileFormulas((p) => !p)}
             >
-              {f.label}
-            </NavLink>
-          ))}
+              Formulas
+              <FaChevronDown
+                className={`nx-acc__chevron${mobileFormulas ? ' nx-acc__chevron--open' : ''}`}
+              />
+            </button>
+            <div
+              className={`nx-acc__body${mobileFormulas ? ' nx-acc__body--open' : ''}`}
+            >
+              {FORMULA_ITEMS.map((f) => (
+                <NavLink
+                  key={f.to}
+                  to={f.to}
+                  className={({ isActive }) =>
+                    `nx-acc__link${isActive ? ' nx-acc__link--active' : ''}`
+                  }
+                  onClick={closeMobile}
+                >
+                  <span className="nx-acc__dot" />
+                  {f.label}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </nav>
 
-          <button
-            className={`nx-drawer__auth${isLoggedIn ? ' nx-auth--out' : ' nx-auth--in'}`}
-            onClick={handleLogin}
-          >
-            {isLoggedIn ? (
-              <>
-                <FaSignOutAlt /> Log Out
-              </>
-            ) : (
-              <>
-                <FaUser /> Log In
-              </>
-            )}
-          </button>
+        {/* Footer */}
+        <div className="nx-drawer__footer">
+          {isLoggedIn ? (
+            <button className="nx-drawer__logout-btn" onClick={handleLogout}>
+              <FaSignOutAlt /> Log Out
+            </button>
+          ) : (
+            <button
+              className="nx-signin-btn nx-signin-btn--full"
+              onClick={goLogin}
+            >
+              <span className="nx-signin-btn__fill" />
+              <span className="nx-signin-btn__shimmer" />
+              <FaUser />
+              <span>Sign In</span>
+              <span className="nx-signin-btn__arr">›</span>
+            </button>
+          )}
         </div>
-      </div>
-
-      {/* Drawer backdrop */}
-      {mobileOpen && (
-        <div
-          className="nx-backdrop"
-          onClick={(): void => setMobileOpen(false)}
-        />
-      )}
+      </aside>
     </>
   );
 };

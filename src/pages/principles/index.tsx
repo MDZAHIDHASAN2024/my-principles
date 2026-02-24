@@ -139,10 +139,10 @@ const Principles = (): React.ReactElement => {
         >
           <div className="pr-header__eyebrow">Core Foundation</div>
           <h1 className="pr-header__title">
-            Principle <span className="pr-header__title-accent">of 4</span>
+            Principle <span className="pr-header__title-accent">of 5</span>
           </h1>
           <p className="pr-header__sub">
-            চারটি মূল নীতি যা একটি পরিপূর্ণ জীবনের ভিত্তি গড়ে তোলে
+            পাঁচ মূল নীতি যা একটি পরিপূর্ণ জীবনের ভিত্তি গড়ে তোলে
           </p>
           <div className="pr-header__line" />
         </div>
@@ -157,7 +157,7 @@ const Principles = (): React.ReactElement => {
         {/* ── Footer note ── */}
         <div className="pr-footnote">
           <span className="pr-footnote__dot" />
-          <span>এই চারটি নীতি অনুসরণ করাই সত্যিকারের সাফল্যের পথ</span>
+          <span>এই পাঁচ নীতি অনুসরণ করাই সত্যিকারের সাফল্যের পথ</span>
           <span className="pr-footnote__dot" />
         </div>
       </div>
